@@ -140,8 +140,19 @@ mergesort:
 merge:
     jr      $ra               
 
-arrcpy:
-copy_loop:
-    
+arrcpy: #DST, SRC, NUM_ELEMS
+    move    $t0, $a0            # start of dest array
+    sll     $t2, $a2, 2         # number of bytes in array
+    addu    $t1, $a0, $t2       # end of array
+    move    $t3, $a1            # start of src array
+    j copy_loop_cond
 
-    jr      $ra
+copy_loop:
+    lw      $t2, $t3            # load source word
+    sw      $t2, $t0            # save source word to dest array
+    addiu   $t0, $t0, 4         # increment dest pointer
+    addiu   $t3, $t3, 4         # increment source pointer
+
+copy_loop_cond:
+    bne     $t0, $t1, copy_loop
+    jr      $ra                 # return
