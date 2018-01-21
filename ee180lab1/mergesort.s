@@ -86,14 +86,15 @@ read_loop_cond:
     bne     $t0, $t1, read_loop 
 
     #---- Call Mergesort ---------------------------------------
-    # ADD YOUR CODE HERE! 
 
-    # You must use a syscall to allocate
-    # temporary storage (temp_array in the C implementation)
+    # Create temp array, store pointer at a2
     li      $v0, 9              # sbrk
     move    $a0, $s2            # s2 already contains the number of bytes
     syscall
-    move    $s3, $v0            # pointer to new array in s3
+    move    $a2, $v0            # arg 2 is temp array address
+    move    $a0, $s0            # arg 0 is the unsorted array
+    move    $a1, $s1            # arg 1 is the number of elements
+    j       mergesort
     # then pass the three arguments in $a0, $a1, and $a2 before
     # calling mergesort
 
