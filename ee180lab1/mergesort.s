@@ -154,11 +154,11 @@ merge_loop:
     lw $t7, 0($t1)               # arr[lpos]
     ble $t6, $t7, right_less     # branch to the less one
 left_less:
-    sw $t7, $t0                  # t[tpos] = a[lpos]
+    sw $t7, 0($t0)                  # t[tpos] = a[lpos]
     addiu $t0, $t0, 4            # tpos++
     addiu $t1, $t1, 4            # lpos ++
 right_less:
-    sw $t6, $t0                  # t[tpos] = ar[rpos]
+    sw $t6, 0($t0)                  # t[tpos] = ar[rpos]
     addiu $t0, $t0, 4            # tpos++
     addiu $t4, $t4, 4            # rpos ++
 
@@ -207,7 +207,7 @@ arrcpy: #DST, SRC, NUM_ELEMS
 
 copy_loop:
     lw      $t2, 0($t3)           # load source word
-    sw      $t2, $t0            # save source word to dest array
+    sw      $t2, 0($t0)            # save source word to dest array
     addiu   $t0, $t0, 4         # increment dest pointer
     addiu   $t3, $t3, 4         # increment source pointer
 
