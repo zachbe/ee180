@@ -135,18 +135,18 @@ print_loop_cond:
 # ADD YOUR CODE HERE! 
 
 mergesort: 
-    addiu   $sp, $sp, 12 //int temparr, tempn, tempmid; #allocate 3 words on the stack
-    sw      $a0, 8($sp) //temparr = array #save array pointer across recursive calls
-    sw      $a1, 4($sp) //tempn = n; #save n across recursive calls
+    addiu   $sp, $sp, 12 #int temparr, tempn, tempmid; #allocate 3 words on the stack
+    sw      $a0, 8($sp) #temparr = array #save array pointer across recursive calls
+    sw      $a1, 4($sp) #tempn = n; #save n across recursive calls
     addi    $t0,$a1, -2 # subtract 2 from n
     bltz    $a1, mergesort_return #if n < 2, return
-    srl     $t1, $a1, 1 //mid = n/2;
-    sw      $t1, 0($sp) //tempmid = mid;
+    srl     $t1, $a1, 1 #mid = n/2;
+    sw      $t1, 0($sp) #tempmid = mid;
     move    $a1, $t1    #set mid as 2nd argument
-    jal     mergesort //mergesort(array,mid,temp_array)
+    jal     mergesort #mergesort(array,mid,temp_array)
     addu    $a0, $a0, 0($sp), #advance array pointer by mid
     sub     $a1, 4($sp), 0($sp) #2nd argument = n - mid
-    jal     mergesort //mergesort(array + mid, n - mid, temp_array)
+    jal     mergesort #mergesort(array + mid, n - mid, temp_array)
     move    $a0, 8($sp) #1st arg: array
     move    $a1, 4($sp) #2nd arg: n
     move    $a3, 0($sp) #4th arg: mid
