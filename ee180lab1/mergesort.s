@@ -94,7 +94,7 @@ read_loop_cond:
     move    $a2, $v0            # arg 2 is temp array address
     move    $a0, $s0            # arg 0 is the unsorted array
     move    $a1, $s1            # arg 1 is the number of elements
-    j       mergesort
+    jal       mergesort
     # then pass the three arguments in $a0, $a1, and $a2 before
     # calling mergesort
 
@@ -141,4 +141,7 @@ merge:
     jr      $ra               
 
 arrcpy:
+copy_loop:
+    
+
     jr      $ra
