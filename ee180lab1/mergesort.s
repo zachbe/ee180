@@ -158,8 +158,80 @@ mergesort_return:
     addiu   $sp, $sp, 12 #restore stack pointer
     jr      $ra
 
-merge:
+#--------------------------------------------------
+
+merge: #ARR, NUM, TEMP, MID
+    move $t0, $a2             # tpos
+    move $t1, $a0             # lpos
+    sll  $t3, $a1, 2
+    addu $t3, $a0, $t3        # end of array (rn)
+    sll  $t4, $a3, 2
+    addu $t4, $a0, $t4        # rpos
+    move $t5, $t4             # mid
+    j merge_loop_cond
+
+merge_loop:
+    lw $t6, 0($t4)               # rarr[rpos]
+    lw $t7, 0($t1)               # arr[lpos]
+    ble $t6, $t7, right_less     # branch to the less one
+left_less:
+    sw $t7, 0($t0)                  # t[tpos] = a[lpos]
+    addiu $t0, $t0, 4            # tpos++
+    addiu $t1, $t1, 4            # lpos ++
+right_less:
+    sw $t6, 0($t0)                  # t[tpos] = ar[rpos]
+    addiu $t0, $t0, 4            # tpos++
+    addiu $t4, $t4, 4            # rpos ++
+
+merge_loop_cond:
+    slt $t6, $t1, $t5           # lpos < mid
+    slt $t7, $t4, $t3           # rpos < rn
+    and $t6, $t6, $t7           # lpos < mid & rpos < rn
+    bnez $t6, merge_loop        # branch is above is not zero
+
+    move $t6, $a0
+    move $t7, $a2
+    move $t8, $a1               #save these for later
+
+    bge $t1, $t5, lpos_not_less_mid # if lpos < mid
+    move $a0, $t0
+    move $a1, $t1
+    subu $a2, $t5, $t1
+    srl $a2, $a2, 2
+    jal arrcpy                      # copy_array(temp + tpos, larr + lpos, mid - lpos)
+lpos_not_less_mid:
+
+    bge $t4, $t3, rpos_not_less_rn  # if rpos < rn
+    move $a0, $t0
+    move $a1, $t4
+    subu $a2, $t3, $t4
+    srl $a2, $a2, 2
+    jal arrcpy                      # copy_array(temp + tpos, rarr + rpos, mid - rpos)
+
+rpos_not_less_rn:
+
+    move $a0, $t6
+    move $a1, $t7
+    move $a2, $t8
+    jal arrcpy                      # copy_array(arr, temp_arr, n)
+
     jr      $ra               
 
-arrcpy:
-    jr      $ra
+#-------------------------------------------------
+
+arrcpy: #DST, SRC, NUM_ELEMS
+    move    $t0, $a0            # start of dest array
+    sll     $t2, $a2, 2         # number of bytes in array
+    addu    $t1, $a0, $t2       # end of array
+    move    $t3, $a1            # start of src array
+    j copy_loop_cond
+
+copy_loop:
+    lw      $t2, 0($t3)           # load source word
+    sw      $t2, 0($t0)            # save source word to dest array
+    addiu   $t0, $t0, 4         # increment dest pointer
+    addiu   $t3, $t3, 4         # increment source pointer
+
+copy_loop_cond:
+    bne     $t0, $t1, copy_loop
+    jr      $ra                 # return
