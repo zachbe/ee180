@@ -90,6 +90,10 @@ read_loop_cond:
 
     # You must use a syscall to allocate
     # temporary storage (temp_array in the C implementation)
+    li      $v0, 9              # sbrk
+    move    $a0, $s2            # s2 already contains the number of bytes
+    syscall
+    move    $s3, $v0            # pointer to new array in s3
     # then pass the three arguments in $a0, $a1, and $a2 before
     # calling mergesort
 
