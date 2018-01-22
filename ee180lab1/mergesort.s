@@ -149,9 +149,9 @@ mergesort:
     lw      $t3, 4($sp)
     sub     $a1, $t3, $t2 #2nd argument = n - mid
     jal     mergesort #mergesort(array + mid, n - mid, temp_array)
-    move    $a0, 8($sp) #1st arg: array
-    move    $a1, 4($sp) #2nd arg: n
-    move    $a3, 0($sp) #4th arg: mid
+    lw      $a0, 8($sp) #1st arg: array
+    lw      $a1, 4($sp) #2nd arg: n
+    lw      $a3, 0($sp) #4th arg: mid
     jal     merge
     addiu   $sp, $sp, 12 #restore stack pointer
     jr      $ra
