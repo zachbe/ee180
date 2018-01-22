@@ -138,8 +138,9 @@ print_loop_cond:
 
 
 mergesort: 
-    addiu   $sp, $sp, -16 #int temparr, tempn, tempmid; #allocate 3 words on the stack
-    sw      $ra, 12($sp)
+    addiu   $sp, $sp, -20 #int temparr, tempn, tempmid; #allocate 3 words on the stack
+    sw      $ra, 16($sp) #store return address 
+    sw      $a2, 12($sp) #store temp array address, since a2 is used later
     sw      $a0, 8($sp) #temparr = array #save array pointer across recursive calls
     sw      $a1, 4($sp) #tempn = n; #save n across recursive calls
     addi    $t0, $a1, -2 # subtract 2 from n
@@ -149,22 +150,23 @@ mergesort:
     move    $a1, $t1    #set mid as 2nd argument
     jal     mergesort #mergesort(array,mid,temp_array)
     lw      $t2, 0($sp)
-    sll     $t2, $t2, 2
-    addu    $a0, $a0, $t2 #advance array pointer by mid
+    sll     $t4, $t2, 2
+    addu    $a0, $a0, $t4 #advance array pointer by mid
     lw      $t3, 4($sp)
     sub     $a1, $t3, $t2 #2nd argument = n - mid
     jal     mergesort #mergesort(array + mid, n - mid, temp_array)
     lw      $a0, 8($sp) #1st arg: array
     lw      $a1, 4($sp) #2nd arg: n
+    lw      $a2, 12($sp) #3rd arg: temp_arr
     lw      $a3, 0($sp) #4th arg: mid
     jal     merge
-    lw      $ra, 12($sp)
-    addiu   $sp, $sp, 16 #restore stack pointer
+    lw      $ra, 16($sp)
+    addiu   $sp, $sp, 20 #restore stack pointer
     jr      $ra
 
 mergesort_return:
-    lw      $ra, 12($sp)
-    addiu   $sp, $sp, 16 #restore stack pointer
+    lw      $ra, 16($sp)
+    addiu   $sp, $sp, 20 #restore stack pointer
     jr      $ra
 
 #--------------------------------------------------
