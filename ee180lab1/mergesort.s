@@ -138,8 +138,8 @@ mergesort:
     addiu   $sp, $sp, 12 #int temparr, tempn, tempmid; #allocate 3 words on the stack
     sw      $a0, 8($sp) #temparr = array #save array pointer across recursive calls
     sw      $a1, 4($sp) #tempn = n; #save n across recursive calls
-    addi    $t0,$a1, -2 # subtract 2 from n
-    bltz    $a1, mergesort_return #if n < 2, return
+    addi    $t0, $a1, -2 # subtract 2 from n
+    bltz    $t0, mergesort_return #if n < 2, return
     srl     $t1, $a1, 1 #mid = n/2;
     sw      $t1, 0($sp) #tempmid = mid;
     move    $a1, $t1    #set mid as 2nd argument
