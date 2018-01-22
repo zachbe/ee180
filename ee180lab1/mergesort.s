@@ -205,7 +205,9 @@ merge_loop_cond:
     move $a1, $t1
     subu $a2, $t5, $t1
     srl $a2, $a2, 2
+    move $t9, $ra
     jal arrcpy                      # copy_array(temp + tpos, larr + lpos, mid - lpos)
+    move $ra, $t9
 lpos_not_less_mid:
 
     bge $t4, $t3, rpos_not_less_rn  # if rpos < rn
@@ -213,14 +215,18 @@ lpos_not_less_mid:
     move $a1, $t4
     subu $a2, $t3, $t4
     srl $a2, $a2, 2
+    move $t9, $ra
     jal arrcpy                      # copy_array(temp + tpos, rarr + rpos, mid - rpos)
+    move $ra, $t9
 
 rpos_not_less_rn:
 
     move $a0, $t6
     move $a1, $t7
     move $a2, $t8
+    move $t9, $ra
     jal arrcpy                      # copy_array(arr, temp_arr, n)
+    move $ra, $t9
 
     jr      $ra               
 
