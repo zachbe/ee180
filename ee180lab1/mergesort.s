@@ -144,8 +144,10 @@ mergesort:
     sw      $t1, 0($sp) #tempmid = mid;
     move    $a1, $t1    #set mid as 2nd argument
     jal     mergesort #mergesort(array,mid,temp_array)
-    addu    $a0, $a0, 0($sp), #advance array pointer by mid
-    sub     $a1, 4($sp), 0($sp) #2nd argument = n - mid
+    lw      $t2, 0($sp)
+    addu    $a0, $a0, $t2 #advance array pointer by mid
+    lw      $t3, 4($sp)
+    sub     $a1, $t3, $t2 #2nd argument = n - mid
     jal     mergesort #mergesort(array + mid, n - mid, temp_array)
     move    $a0, 8($sp) #1st arg: array
     move    $a1, 4($sp) #2nd arg: n
