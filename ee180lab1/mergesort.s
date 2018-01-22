@@ -136,6 +136,7 @@ print_loop_cond:
 .globl mergesort
 .globl merge
 .globl merge_loop
+.globl arrcpy
 
 
 mergesort: 
@@ -154,6 +155,7 @@ mergesort:
     sll     $t4, $t2, 2
     addu    $a0, $a0, $t4 #advance array pointer by mid
     lw      $t3, 4($sp)
+    lw      $a2, 12($sp) #3rd arg: temp_arr
     sub     $a1, $t3, $t2 #2nd argument = n - mid
     jal     mergesort #mergesort(array + mid, n - mid, temp_array)
     lw      $a0, 8($sp) #1st arg: array
