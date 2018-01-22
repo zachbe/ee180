@@ -132,10 +132,13 @@ print_loop_cond:
     jr      $ra
 
 
-# ADD YOUR CODE HERE! 
+# ADD YOUR CODE HERE!
+.globl mergesort
+.globl merge
+
 
 mergesort: 
-    addiu   $sp, $sp, 12 #int temparr, tempn, tempmid; #allocate 3 words on the stack
+    addiu   $sp, $sp, -12 #int temparr, tempn, tempmid; #allocate 3 words on the stack
     sw      $a0, 8($sp) #temparr = array #save array pointer across recursive calls
     sw      $a1, 4($sp) #tempn = n; #save n across recursive calls
     addi    $t0, $a1, -2 # subtract 2 from n
@@ -145,6 +148,7 @@ mergesort:
     move    $a1, $t1    #set mid as 2nd argument
     jal     mergesort #mergesort(array,mid,temp_array)
     lw      $t2, 0($sp)
+    sll     $t2, $t2, 2
     addu    $a0, $a0, $t2 #advance array pointer by mid
     lw      $t3, 4($sp)
     sub     $a1, $t3, $t2 #2nd argument = n - mid
@@ -180,6 +184,7 @@ left_less:
     sw $t7, 0($t0)                  # t[tpos] = a[lpos]
     addiu $t0, $t0, 4            # tpos++
     addiu $t1, $t1, 4            # lpos ++
+    j merge_loop_cond
 right_less:
     sw $t6, 0($t0)                  # t[tpos] = ar[rpos]
     addiu $t0, $t0, 4            # tpos++
