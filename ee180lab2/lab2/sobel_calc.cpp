@@ -16,18 +16,20 @@ void grayScale(Mat& img, Mat& img_gray_out)
   uint8_t*arr_red =  img.data;
   uint8_t*arr_green = arr_red + 1;
   uint8_t*arr_blue = arr_red + 2;
-  uint8x8x3_t rgbvec;
-  float colorblue;
-  float colorgreen;
+  uint8_t colorblue;
+  uint8_t colorgreen;
   unsigned char* output_arr = img_gray_out.data;
   // Convert to grayscale
-  float colorred;
-  for (int i=0; i<rows*cols; i++) {
-          colorred = .114*arr_red[STEP1*i];
-          colorgreen = .587*arr_green[STEP1*i]
-          colorblue =  .299*arr_blue[STEP1*i];
-          output_arr[i] = colorred+colorblue+colorgreen;
-      }
+  uint8_t colorred;
+  
+  for (int i=0; i<rows*cols/8; i++) {
+          uint8x8x3_t vec = vld3_u8(arr_red + 24*i);
+          vec.val[0] = vec.val[0]>>3;//.125 (error:.011)
+          vec.val[1] = vec.val[1]>>1 + vec.val[1]>>4;//.5625 (error .0245)
+	  vec.val[2] = vec.val[2]>>2 + vec.val[2]>>4;//.3125 (error .0126)
+          vec.val[0] = vec.val[0] + vec.val[1];
+          vec.val[0] = vec.val[0] + vec.val[2];
+          vst1_u8(output_arr + 8*i, vec.val[0]);
    }
 }
 
