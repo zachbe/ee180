@@ -85,6 +85,7 @@ int mainSingleThread()
 
 // This mutex will be used to allow threads to contest for thread 0 status
 pthread_barrier_t endSobel;
+pthread_barrier_t startSobel;
 pthread_mutex_t thread0 = PTHREAD_MUTEX_INITIALIZER;
 pthread_t thread0_id = 0;
 int mainMultiThread()
