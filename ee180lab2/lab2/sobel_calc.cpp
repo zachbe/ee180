@@ -11,11 +11,15 @@ using namespace cv;
  ********************************************/
 void grayScale(Mat& img, Mat& img_gray_out)
 {
-  const int rows = IMG_HEIGHT;//640x480
-  const int cols = IMG_WIDTH;//step1 = 3 for 3 contiguous RGB values
+  const int rows = img.rows;//640x480
+  const int cols = img.cols;//step1 = 3 for 3 contiguous RGB values
   uint8_t*arr_red =  img.data;
   unsigned char* output_arr = img_gray_out.data;
   // Convert to grayscale
+  for (int i = 0; i < rows*cols; i++) {
+	output_arr[i] = .114*arr_red[STEP1*i] + .587*arr_red[STEP1*i + 1] + .299*arr_red[STEP1*i+2];
+  }
+/*
   for (int i=0; i<rows*cols/8; i++) {
           uint8x8x3_t vec = vld3_u8(arr_red + 24*i);
           uint8x8_t vec_output = vshr_n_u8(vec.val[0],3);
@@ -28,6 +32,7 @@ void grayScale(Mat& img, Mat& img_gray_out)
 	  //vec_output = vsub_u8(vec_output, vshr_n_u8(vec.val[2],6));//.296 (error .003) 
           vst1_u8(output_arr + 8*i, vec_output);
    }
+*/
 }
 
 /*******************************************

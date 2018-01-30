@@ -1,6 +1,5 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "sobel_alg.h"
-#include <arm_neon.h>
 using namespace cv;
 
 /*******************************************
@@ -11,12 +10,11 @@ using namespace cv;
  ********************************************/
 void grayScale(Mat& img, Mat& img_gray_out)
 {
-  const int rows = IMG_HEIGHT;//640x480
-  const int cols = IMG_WIDTH;//step1 = 3 for 3 contiguous RGB values
+  const int rows = img.rows;//640x480
+  const int cols = img.cols;//step1 = 3 for 3 contiguous RGB values
   uint8_t*arr_red =  img.data;
   uint8_t*arr_green = arr_red + 1;
   uint8_t*arr_blue = arr_red + 2;
-  uint8x8x3_t rgbvec;
   float colorblue;
   float colorgreen;
   unsigned char* output_arr = img_gray_out.data;
@@ -24,11 +22,10 @@ void grayScale(Mat& img, Mat& img_gray_out)
   float colorred;
   for (int i=0; i<rows*cols; i++) {
           colorred = .114*arr_red[STEP1*i];
-          colorgreen = .587*arr_green[STEP1*i]
+          colorgreen = .587*arr_green[STEP1*i];
           colorblue =  .299*arr_blue[STEP1*i];
           output_arr[i] = colorred+colorblue+colorgreen;
-      }
-   }
+  }
 }
 
 /*******************************************
