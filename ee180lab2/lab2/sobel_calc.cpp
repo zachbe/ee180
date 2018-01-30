@@ -14,22 +14,19 @@ void grayScale(Mat& img, Mat& img_gray_out)
   const int rows = IMG_HEIGHT;//640x480
   const int cols = IMG_WIDTH;//step1 = 3 for 3 contiguous RGB values
   uint8_t*arr_red =  img.data;
-  uint8_t*arr_green = arr_red + 1;
-  uint8_t*arr_blue = arr_red + 2;
-  uint8_t colorblue;
-  uint8_t colorgreen;
   unsigned char* output_arr = img_gray_out.data;
   // Convert to grayscale
-  uint8_t colorred;
-  
   for (int i=0; i<rows*cols/8; i++) {
           uint8x8x3_t vec = vld3_u8(arr_red + 24*i);
-          vec.val[0] = (vec.val[0]>>3) ;//- (vec.val[0] >>6); //.109 (error:.006)
-          vec.val[1] = (vec.val[1]>>1) + (vec.val[1]>>4);// + (vec.val[1] >> 5);//.593 (error .006)
-	  vec.val[2] = (vec.val[2]>>2) + (vec.val[2]>>4);// - (vec.val[2] >> 6);//.296 (error .003) 
-          vec.val[0] = vec.val[0] + vec.val[1];
-          vec.val[0] = vec.val[0] + vec.val[2];
-          vst1_u8(output_arr + 8*i, vec.val[0]);
+          uint8x8_t vec_output = vshr_n_u8(vec.val[0],3);
+	  //vec_output = vsub_u8(vec_output,vshr_n_u8(vec.val[0],6)); //.109 (error:.006)
+          vec_output = vadd_u8(vec_output,vshr_n_u8(vec.val[1],1));
+	  //vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[1],4));
+	  //vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[1],5));//.593 (error .006)
+	  vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[2],2));
+	  //vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[2],4));
+	  //vec_output = vsub_u8(vec_output, vshr_n_u8(vec.val[2],6));//.296 (error .003) 
+          vst1_u8(output_arr + 8*i, vec_output);
    }
 }
 
@@ -54,7 +51,7 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
   int rows = img_gray.rows;
   int cols = img_gray.cols;
   uint8_t* baseptr = img_gray.data;
-  
+  /*
   for (int i = 1; i<rows; i++) {
 	for(int j = 0; j<cols/8; j++) {
 		uint8x8_t vtopleft = vld1_u8(baseptr + IMG_WIDTH*(i-1) + (8*(j)));
@@ -76,7 +73,7 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
 		sobel = vsubw_u8(sobel, vcentright);
 		sobel = vsubw_u8(sobel, vbotright);
 		sobel =  vsubw_u8(sobel, vbotright);
-		/*uint16x8_t sobelx = vaddl_u8(vtopleft,vtopright);
+		uint16x8_t sobelx = vaddl_u8(vtopleft,vtopright);
 		sobelx = vaddw_u8(sobelx, vtopcent);
 		sobelx = vaddw_u8(sobelx, vtopcent);
 		sobelx = vsubw_u8(sobelx, vbotcent);
@@ -90,14 +87,14 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
 		sobely = vsubw_u8(sobely, vcentright);
 		sobely = vsubw_u8(sobely, vtopright);
 		sobely = vsubw_u8(sobely, vbotright);
-		uint16x8_t sobel = sobelx + sobely;*/  
-		vst1_u8(img_sobel_out.data + IMG_WIDTH*i + 8*j, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobel)))));
-		//vst1_u8(img_outx.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobelx)))));
-		//vst1_u8(img_outy.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobely)))));
+		//uint16x8_t sobel = sobelx + sobely;  
+		//vst1_u8(img_sobel_out.data + IMG_WIDTH*i + 8*j, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobel)))));
+		vst1_u8(img_outx.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobelx)))));
+		vst1_u8(img_outy.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobely)))));
 	}
 }
 
-/*
+*/
   for (int i=1; i<img_gray.rows; i++) {
     for (int j=1; j<img_gray.cols; j++) {
       sobel = abs(img_gray.data[IMG_WIDTH*(i-1) + (j-1)] -
@@ -128,8 +125,8 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
      img_outy.data[IMG_WIDTH*(i) + j] = sobel;
     }
   }
-*/
-/*  // Combine the two convolutions into the output image
+
+  // Combine the two convolutions into the output image
   for (int i=1; i<img_gray.rows; i++) {
     for (int j=1; j<img_gray.cols; j++) {
       sobel = img_outx.data[IMG_WIDTH*(i) + j] +
@@ -137,5 +134,5 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
       sobel = (sobel > 255) ? 255 : sobel;
       img_sobel_out.data[IMG_WIDTH*(i) + j] = sobel;
     }
-  }*/
+  }
 }
