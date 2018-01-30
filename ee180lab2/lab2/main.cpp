@@ -94,6 +94,8 @@ int mainMultiThread()
 
   // Set up a barrier to synchronize both threads at the end of runSobel
   pthread_barrier_init(&endSobel, NULL, 2);
+  pthread_barrier_init(&startSobel, NULL, 2);
+
 
   // Call threads
   int ret;
