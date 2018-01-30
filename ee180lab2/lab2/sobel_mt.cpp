@@ -116,10 +116,10 @@ void *runSobelMT(void *ptr)
 
     if (myID == thread0_id){
       pc_start(&perf_counters);
-      grayScale(img_gray_top, img_sobel_top);
+      sobelCalc(img_gray_top, img_sobel_top);
       pc_stop(&perf_counters);
     }
-    else{ grayScale(img_gray_bot, img_sobel_bot); }
+    else{ sobelCalc(img_gray_bot, img_sobel_bot); }
 
     if (myID == thread0_id){
       sobel_time = perf_counters.cycles.count;
