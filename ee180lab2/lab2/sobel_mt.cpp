@@ -121,13 +121,14 @@ void *runSobelMT(void *ptr)
     }
     else{ sobelCalc(img_gray_bot, img_sobel_bot); }
 
-    pthread_barrier_wait(&startSobel);
+    pthread_barrier_wait(&endSobel);
 
     if (myID == thread0_id){
       sobel_time = perf_counters.cycles.count;
       sobel_l1cm += perf_counters.l1_misses.count;
       sobel_ic += perf_counters.ic.count;
 
+      pc_start(&perf_counters);
       //join the two mats
       Rect toprec(0, 0, img_sobel_top.cols, img_sobel_top.rows - 1);
       Rect botrec(0, 1, img_sobel_bot.cols, img_sobel_bot.rows - 2);
@@ -137,7 +138,6 @@ void *runSobelMT(void *ptr)
     
     // LAB 2, PART 2: End parallel section
 
-      pc_start(&perf_counters);
       namedWindow(top, CV_WINDOW_AUTOSIZE);
       imshow(top, img_sobel);
       pc_stop(&perf_counters);
