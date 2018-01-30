@@ -51,6 +51,42 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
   unsigned short sobel;
 
   // Calculate the x convolution
+  int rows = img_gray.rows;
+  int cols = img_gray.cols;
+  uint8_t* baseptr = img_gray.data;
+  
+  for (int i = 1; i<rows; i++) {
+	for(int j = 0; j<cols/8; j++) {
+		uint8x8_t vtopleft = vld1_u8(baseptr + IMG_WIDTH*(i-1) + (8*(j)));
+		uint8x8_t vbotleft = vld1_u8(baseptr+IMG_WIDTH*(i+1) + (8*(j)));
+		uint8x8_t vtopcent = vld1_u8(baseptr+IMG_WIDTH*(i-1) + (8*(j)+1));
+		uint8x8_t vbotcent = vld1_u8(baseptr+IMG_WIDTH*(i+1) + (8*(j)+1));
+		uint8x8_t vtopright = vld1_u8(baseptr+IMG_WIDTH*(i-1) + (8*(j)+2));
+		uint8x8_t vbotright = vld1_u8(baseptr+IMG_WIDTH*(i+1) + (8*(j)+2));
+		uint8x8_t vcentleft = vld1_u8(baseptr+IMG_WIDTH*i + (8*(j)));
+		uint8x8_t vcentright = vld1_u8(baseptr+IMG_WIDTH*i + (8*(j)+2));
+		uint16x8_t sobelx = vaddl_u8(vtopleft,vtopright);
+		sobelx = vaddw_u8(sobelx, vtopcent);
+		sobelx = vaddw_u8(sobelx, vtopcent);
+		sobelx = vsubw_u8(sobelx, vbotcent);
+		sobelx = vsubw_u8(sobelx, vbotcent);
+		sobelx = vsubw_u8(sobelx, vbotright);
+		sobelx = vsubw_u8(sobelx, vbotleft);
+		uint16x8_t sobely = vaddl_u8(vtopleft, vbotleft);
+		sobely = vaddw_u8(sobely, vcentleft);
+		sobely = vaddw_u8(sobely, vcentleft);
+		sobely = vsubw_u8(sobely, vcentright);
+		sobely = vsubw_u8(sobely, vcentright);
+		sobely = vsubw_u8(sobely, vtopright);
+		sobely = vsubw_u8(sobely, vbotright);
+		uint16x8_t sobel = sobelx + sobely;  
+		vst1_u8(img_sobel_out.data + IMG_WIDTH*i + 8*j, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobel)))));
+		//vst1_u8(img_outx.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobelx)))));
+		//vst1_u8(img_outy.data + IMG_WIDTH*i + 8*j + 1, vreinterpret_u8_s8(vqmovn_s16(vabsq_s16(vreinterpretq_s16_u16(sobely)))));
+	}
+}
+
+/*
   for (int i=1; i<img_gray.rows; i++) {
     for (int j=1; j<img_gray.cols; j++) {
       sobel = abs(img_gray.data[IMG_WIDTH*(i-1) + (j-1)] -
@@ -65,7 +101,8 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
     }
   }
 
-  // Calc the y convolution
+  
+// Calc the y convolution
   for (int i=1; i<img_gray.rows; i++) {
     for (int j=1; j<img_gray.cols; j++) {
      sobel = abs(img_gray.data[IMG_WIDTH*(i-1) + (j-1)] -
@@ -80,8 +117,8 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
      img_outy.data[IMG_WIDTH*(i) + j] = sobel;
     }
   }
-
-  // Combine the two convolutions into the output image
+*/
+/*  // Combine the two convolutions into the output image
   for (int i=1; i<img_gray.rows; i++) {
     for (int j=1; j<img_gray.cols; j++) {
       sobel = img_outx.data[IMG_WIDTH*(i) + j] +
@@ -89,5 +126,5 @@ void sobelCalc(Mat& img_gray, Mat& img_sobel_out)
       sobel = (sobel > 255) ? 255 : sobel;
       img_sobel_out.data[IMG_WIDTH*(i) + j] = sobel;
     }
-  }
+  }*/
 }

@@ -25,7 +25,7 @@ static Mat img_gray, img_sobel, img_gray_top, img_gray_bot, img_sobel_top, img_s
 static float total_fps, total_ipc, total_epf;
 static float gray_total, sobel_total, cap_total, disp_total;
 static float sobel_ic_total, sobel_l1cm_total;
-
+static CvCapture* video_cap;
 /*******************************************
  * Model: runSobelMT
  * Input: None
@@ -59,7 +59,6 @@ void *runSobelMT(void *ptr)
   // the other half of the image.
 
   // Start algorithm
-  CvCapture* video_cap;
   if (myID == thread0_id) {
     pc_init(&perf_counters, 0);
 
@@ -101,7 +100,6 @@ void *runSobelMT(void *ptr)
       sobel_l1cm = perf_counters.l1_misses.count;
       sobel_ic = perf_counters.ic.count;
     }
-
     pthread_barrier_wait(&startSobel);
 
     // LAB 2, PART 2: Start parallel section
