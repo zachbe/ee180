@@ -1,17 +1,17 @@
 Percent of time per function
-Capture, 35.9592%
-Grayscale, 16.0496%
-Sobel, 25.5996%
-Display, 22.3916%
+Capture, 36.3202%
+Grayscale, 16.824%
+Sobel, 25.3669%
+Display, 21.4889%
 
 Summary
-Frames per second, 70.5395
-Cycles per frame, 1.31819e+07
-Energy per frames (mJ), 19.847
+Frames per second, 71.6277
+Cycles per frame, 1.28093e+07
+Energy per frames (mJ), 19.5455
 Total frames, 30
 
 Hardware Stats (Cap + Gray + Sobel + Display)
-Instructions per cycle, 0.642947
-L1 misses per frame, 150495
-L1 misses per instruction, 0.0178279
-Instruction count per frame, 8.44152e+06
+Instructions per cycle, 0.668854
+L1 misses per frame, 150053
+L1 misses per instruction, 0.0176908
+Instruction count per frame, 8.48195e+06
