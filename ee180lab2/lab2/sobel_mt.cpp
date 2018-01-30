@@ -121,6 +121,8 @@ void *runSobelMT(void *ptr)
     }
     else{ sobelCalc(img_gray_bot, img_sobel_bot); }
 
+    pthread_barrier_wait(&startSobel);
+
     if (myID == thread0_id){
       sobel_time = perf_counters.cycles.count;
       sobel_l1cm += perf_counters.l1_misses.count;
@@ -158,6 +160,7 @@ void *runSobelMT(void *ptr)
     }
   }
 
+if(myID == thread0_id){
   total_epf = PROC_EPC*NCORES/(total_fps/i);
   float total_time = float(gray_total + sobel_total + cap_total + disp_total);
 
@@ -180,6 +183,7 @@ void *runSobelMT(void *ptr)
 
   cvReleaseCapture(&video_cap);
   results_file.close();
+}
   pthread_barrier_wait(&endSobel);
   return NULL;
 }
