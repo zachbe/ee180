@@ -88,7 +88,7 @@ void *runSobelMT(void *ptr)
 
       //split frame in two for each worker
       Rect toprec(0, 0, src.cols, (src.rows / 2) + 1);
-      Rect botrec(0, src.rows / 2, src.cols, src.rows - src.rows / 2 + 1);
+      Rect botrec(0, src.rows / 2 - 1, src.cols, src.rows - src.rows / 2 + 1);
       topsrc = src(toprec);
       botsrc = src(botrec);
 
@@ -130,9 +130,9 @@ void *runSobelMT(void *ptr)
 
       //join the two mats
       Rect toprec(0, 0, img_sobel_top.cols, img_sobel_top.rows - 1);
-      Rect botrec(0, 1, img_sobel_bot.cols, img_sobel_bot.rows - 1);
+      Rect botrec(0, 1, img_sobel_bot.cols, img_sobel_bot.rows - 2);
       img_sobel_top = img_sobel_top(toprec);
-      img_sobel_bot = img_sobel_top(botrec);
+      img_sobel_bot = img_sobel_bot(botrec);
       vconcat(img_sobel_top, img_sobel_bot, img_sobel);
     
     // LAB 2, PART 2: End parallel section
