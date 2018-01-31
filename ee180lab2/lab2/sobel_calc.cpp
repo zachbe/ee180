@@ -16,9 +16,9 @@ void grayScale(Mat& img, Mat& img_gray_out)
   uint8_t* const arr_red =  img.data;
   unsigned char* output_arr = img_gray_out.data;
   // Convert to grayscale
-  for (int i = 0; i < rows*cols; i++) {
-	output_arr[i] = .114*arr_red[STEP1*i] + .587*arr_red[STEP1*i + 1] +  .299*arr_red[STEP1*i+2];
-  }
+  //for (int i = 0; i < rows*cols; i++) {
+	//output_arr[i] = .114*arr_red[STEP1*i] + .587*arr_red[STEP1*i + 1] +  .299*arr_red[STEP1*i+2];
+  //}
  // float16x4_t coeff0 = {.114f, .114f, .114f, .114f}; 
   //float16x4_t coeff1 = {.587f, .587f, .587f, .587f}; 
   //float16x4_t coeff2 = {.299f, .299f, .299f, .299f};
@@ -36,8 +36,8 @@ void grayScale(Mat& img, Mat& img_gray_out)
 	  float32x4_t float2A = vcvtq_f32_u32(vaddl_u16(vget_high_u16(extended2),zeros16));
           float32x4_t float2B = vcvtq_f32_u32(vaddl_u16(vget_low_u16(extended2),zeros16));
 	  float32x4_t sumA = .114f*float0A + .587f*float1A + .299f*float2A;
-	  float32x4_t sumB = sumA +  .114f*float0B + .587f*float1B + .299f*float2B;
-	  uint16x8_t extended_gray = vcombine_u16(vmovn_u32(vcvtq_u32_f32(sumB)), vmovn_u32(vcvtq_u32_f32(sumB)));  
+	  float32x4_t sumB = .114f*float0B + .587f*float1B + .299f*float2B;
+	  uint16x8_t extended_gray = vcombine_u16(vmovn_u32(vcvtq_u32_f32(sumB)), vmovn_u32(vcvtq_u32_f32(sumA)));  
 	  uint8x8_t vec_output = vmovn_u16(extended_gray);
 	  vst1_u8(output_arr + 8*i, vec_output);
 	/*
