@@ -35,8 +35,6 @@ static float sobel_ic_total, sobel_l1cm_total;
  *   function processes NUM_ITER frames.
  ********************************************/
 
-pthread_barrier_t startSobel;
-
 void *runSobelMT(void *ptr)
 {
   // Set up variables for computing Sobel
