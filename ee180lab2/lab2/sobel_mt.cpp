@@ -164,6 +164,7 @@ void *runSobelMT(void *ptr)
         break;
       }
     }
+    pthread_barrier_wait(&endSobel);
     if(i >= max_frames){
       break;
     }
