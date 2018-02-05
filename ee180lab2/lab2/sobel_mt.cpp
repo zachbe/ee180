@@ -87,8 +87,8 @@ void *runSobelMT(void *ptr)
       src = cvQueryFrame(video_cap);
 
       //split frame in two for each worker
-      Rect toprec(0, 0, src.cols, src.rows / 2 + 1);
-      Rect botrec(0, toprec.height, src.cols, src.rows - src.rows / 2 + 1);
+      Rect toprec(0, 0, src.cols, (src.rows / 2) + 1);
+      Rect botrec(0, src.rows / 2, src.cols, src.rows - src.rows / 2 + 1);
       topsrc = src(toprec);
       botsrc = src(botrec);
 
