@@ -26,6 +26,7 @@ static float total_fps, total_ipc, total_epf;
 static float gray_total, sobel_total, cap_total, disp_total;
 static float sobel_ic_total, sobel_l1cm_total;
 static CvCapture* video_cap;
+static int max_frames;
 /*******************************************
  * Model: runSobelMT
  * Input: None
@@ -66,10 +67,10 @@ void *runSobelMT(void *ptr)
       video_cap = cvCreateFileCapture(opts.videoFile);
     }
 
-    video_cap = cvCreateFileCapture(opts.videoFile);
     cvSetCaptureProperty(video_cap, CV_CAP_PROP_FRAME_WIDTH, IMG_WIDTH);
     cvSetCaptureProperty(video_cap, CV_CAP_PROP_FRAME_HEIGHT, IMG_HEIGHT);
 
+    max_frames = opts.numFrames;
   }
   // Keep track of the frames
   int i = 0;
@@ -135,7 +136,7 @@ void *runSobelMT(void *ptr)
       img_sobel_top = img_sobel_top(toprec);
       img_sobel_bot = img_sobel_bot(botrec);
       vconcat(img_sobel_top, img_sobel_bot, img_sobel);
-    
+
     // LAB 2, PART 2: End parallel section
 
       namedWindow(top, CV_WINDOW_AUTOSIZE);
@@ -155,40 +156,43 @@ void *runSobelMT(void *ptr)
       total_fps += PROC_FREQ/float(cap_time + disp_time + gray_time + sobel_time);
       total_ipc += float(sobel_ic/float(cap_time + disp_time + gray_time + sobel_time));
       i++;
-    
+
 
     // Press q to exit
-    char c = cvWaitKey(1);
-    if (c == 'q' || i >= opts.numFrames) {
+      char c = cvWaitKey(1);
+      if (c == 'q'){
+        break;
+      }
+    }
+    if(i >= max_frames){
       break;
     }
   }
+
+  if(myID == thread0_id){
+    total_epf = PROC_EPC*NCORES/(total_fps/i);
+    float total_time = float(gray_total + sobel_total + cap_total + disp_total);
+
+    results_file.open("mt_perf.csv", ios::out);
+    results_file << "Percent of time per function" << endl;
+    results_file << "Capture, " << (cap_total/total_time)*100 << "%" << endl;
+    results_file << "Grayscale, " << (gray_total/total_time)*100 << "%" << endl;
+    results_file << "Sobel, " << (sobel_total/total_time)*100 << "%" << endl;
+    results_file << "Display, " << (disp_total/total_time)*100 << "%" << endl;
+    results_file << "\nSummary" << endl;
+    results_file << "Frames per second, " << total_fps/i << endl;
+    results_file << "Cycles per frame, " << total_time/i << endl;
+    results_file << "Energy per frames (mJ), " << total_epf*1000 << endl;
+    results_file << "Total frames, " << i << endl;
+    results_file << "\nHardware Stats (Cap + Gray + Sobel + Display)" << endl;
+    results_file << "Instructions per cycle, " << total_ipc/i << endl;
+    results_file << "L1 misses per frame, " << sobel_l1cm_total/i << endl;
+    results_file << "L1 misses per instruction, " << sobel_l1cm_total/sobel_ic_total << endl;
+    results_file << "Instruction count per frame, " << sobel_ic_total/i << endl;
+
+    cvReleaseCapture(&video_cap);
+    results_file.close();
   }
-
-if(myID == thread0_id){
-  total_epf = PROC_EPC*NCORES/(total_fps/i);
-  float total_time = float(gray_total + sobel_total + cap_total + disp_total);
-
-  results_file.open("mt_perf.csv", ios::out);
-  results_file << "Percent of time per function" << endl;
-  results_file << "Capture, " << (cap_total/total_time)*100 << "%" << endl;
-  results_file << "Grayscale, " << (gray_total/total_time)*100 << "%" << endl;
-  results_file << "Sobel, " << (sobel_total/total_time)*100 << "%" << endl;
-  results_file << "Display, " << (disp_total/total_time)*100 << "%" << endl;
-  results_file << "\nSummary" << endl;
-  results_file << "Frames per second, " << total_fps/i << endl;
-  results_file << "Cycles per frame, " << total_time/i << endl;
-  results_file << "Energy per frames (mJ), " << total_epf*1000 << endl;
-  results_file << "Total frames, " << i << endl;
-  results_file << "\nHardware Stats (Cap + Gray + Sobel + Display)" << endl;
-  results_file << "Instructions per cycle, " << total_ipc/i << endl;
-  results_file << "L1 misses per frame, " << sobel_l1cm_total/i << endl;
-  results_file << "L1 misses per instruction, " << sobel_l1cm_total/sobel_ic_total << endl;
-  results_file << "Instruction count per frame, " << sobel_ic_total/i << endl;
-
-  cvReleaseCapture(&video_cap);
-  results_file.close();
-}
   pthread_barrier_wait(&endSobel);
   return NULL;
 }
