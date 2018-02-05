@@ -101,12 +101,12 @@ void *runSobelMT(void *ptr)
     pthread_barrier_wait(&startSobel);
 
     // LAB 2, PART 2: Start parallel section
-    pc_start(&perf_counters);
     if (myID == thread0_id){
+      pc_start(&perf_counters);
       grayScale(topsrc, img_gray_top);
+      pc_stop(&perf_counters);
     }
     else{ grayScale(botsrc, img_gray_bot); }
-    pc_stop(&perf_counters);
 
     if (myID == thread0_id){
       gray_time = perf_counters.cycles.count;
@@ -114,12 +114,12 @@ void *runSobelMT(void *ptr)
       sobel_ic += perf_counters.ic.count;
     }
 
-    pc_start(&perf_counters);
     if (myID == thread0_id){
+      pc_start(&perf_counters);
       grayScale(img_gray_top, img_sobel_top);
+      pc_stop(&perf_counters);
     }
     else{ grayScale(img_gray_bot, img_sobel_bot); }
-    pc_stop(&perf_counters);
 
     if (myID == thread0_id){
       sobel_time = perf_counters.cycles.count;
