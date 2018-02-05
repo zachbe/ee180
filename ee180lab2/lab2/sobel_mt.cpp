@@ -77,18 +77,18 @@ void *runSobelMT(void *ptr)
   while (1) {
     if (myID == thread0_id) {
       // Allocate memory to hold grayscale and sobel images
-      img_gray_top = Mat(IMG_HEIGHT/2, IMG_WIDTH, CV_8UC1);
-      img_sobel_top = Mat(IMG_HEIGHT/2, IMG_WIDTH, CV_8UC1);
-      img_gray_bot = Mat(IMG_HEIGHT - IMG_HEIGHT/2, IMG_WIDTH, CV_8UC1);
-      img_sobel_bot = Mat(IMG_HEIGHT - IMG_HEIGHT/2, IMG_WIDTH, CV_8UC1);
+      img_gray_top = Mat(IMG_HEIGHT/2 + 1, IMG_WIDTH, CV_8UC1);
+      img_sobel_top = Mat(IMG_HEIGHT/2 + 1, IMG_WIDTH, CV_8UC1);
+      img_gray_bot = Mat(IMG_HEIGHT - IMG_HEIGHT/2 + 1, IMG_WIDTH, CV_8UC1);
+      img_sobel_bot = Mat(IMG_HEIGHT - IMG_HEIGHT/2 + 1, IMG_WIDTH, CV_8UC1);
       img_sobel = Mat(IMG_HEIGHT, IMG_WIDTH, CV_8UC1);
 
       pc_start(&perf_counters);
       src = cvQueryFrame(video_cap);
 
       //split frame in two for each worker
-      Rect toprec(0, 0, src.cols, src.rows / 2);
-      Rect botrec(0, toprec.height, src.cols, src.rows - toprec.height);
+      Rect toprec(0, 0, src.cols, src.rows / 2 + 1);
+      Rect botrec(0, toprec.height, src.cols, src.rows - src.rows / 2 + 1);
       topsrc = src(toprec);
       botsrc = src(botrec);
 
@@ -129,6 +129,10 @@ void *runSobelMT(void *ptr)
       sobel_ic += perf_counters.ic.count;
 
       //join the two mats
+      Rect toprec(0, 0, img_sobel_top.cols, img_sobel_top.rows - 1);
+      Rect botrec(0, 1, img_sobel_bot.cols, img_sobel_bot.rows - 1);
+      img_sobel_top = img_sobel_top(toprec);
+      img_sobel_bot = img_sobel_top(botrec);
       vconcat(img_sobel_top, img_sobel_bot, img_sobel);
     
     // LAB 2, PART 2: End parallel section
@@ -151,13 +155,15 @@ void *runSobelMT(void *ptr)
       total_fps += PROC_FREQ/float(cap_time + disp_time + gray_time + sobel_time);
       total_ipc += float(sobel_ic/float(cap_time + disp_time + gray_time + sobel_time));
       i++;
-
-      // Press q to exit
-      char c = cvWaitKey(10);
-      if (c == 'q' || i >= opts.numFrames) {
-        break;
-      }
     }
+
+    pthread_barrier_wait(&startSobel);
+    // Press q to exit
+    char c = cvWaitKey(10);
+    if (c == 'q' || i >= opts.numFrames) {
+      break;
+    }
+  
   }
 
 if(myID == thread0_id){
