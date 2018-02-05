@@ -10,21 +10,16 @@ using namespace cv;
  ********************************************/
 void grayScale(Mat& img, Mat& img_gray_out)
 {
-  const int rows = img.rows;//640x480
-  const int cols = img.cols;//step1 = 3 for 3 contiguous RGB values
-  uint8_t*arr_red =  img.data;
-  uint8_t*arr_green = arr_red + 1;
-  uint8_t*arr_blue = arr_red + 2;
-  float colorblue;
-  float colorgreen;
-  unsigned char* output_arr = img_gray_out.data;
+  double color;
+
   // Convert to grayscale
-  float colorred;
-  for (int i=0; i<rows*cols; i++) {
-          colorred = .114*arr_red[STEP1*i];
-          colorgreen = .587*arr_green[STEP1*i];
-          colorblue =  .299*arr_blue[STEP1*i];
-          output_arr[i] = colorred+colorblue+colorgreen;
+  for (int i=0; i<img.rows; i++) {
+    for (int j=0; j<img.cols; j++) {
+      color = .114*img.data[STEP0*i + STEP1*j] +
+              .587*img.data[STEP0*i + STEP1*j + 1] +
+              .299*img.data[STEP0*i + STEP1*j + 2];
+      img_gray_out.data[IMG_WIDTH*i + j] = color;
+    }
   }
 }
 
