@@ -27,6 +27,7 @@ static float gray_total, sobel_total, cap_total, disp_total;
 static float sobel_ic_total, sobel_l1cm_total;
 static CvCapture* video_cap;
 static int max_frames;
+static int i = 0;
 /*******************************************
  * Model: runSobelMT
  * Input: None
@@ -72,8 +73,6 @@ void *runSobelMT(void *ptr)
 
     max_frames = opts.numFrames;
   }
-  // Keep track of the frames
-  int i = 0;
 
   while (1) {
     if (myID == thread0_id) {
