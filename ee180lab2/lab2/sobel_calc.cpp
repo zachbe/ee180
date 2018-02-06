@@ -23,12 +23,12 @@ void grayScale(Mat& img, Mat& img_gray_out)
   for (int i=0; i<rows*cols/8; i++) {
           uint8x8x3_t vec = vld3_u8(arr_red + 24*i);
           uint8x8_t vec_output = vshr_n_u8(vec.val[0],3);
-	  //vec_output = vsub_u8(vec_output,vshr_n_u8(vec.val[0],6)); //.109 (error:.006)
+	  vec_output = vsub_u8(vec_output,vshr_n_u8(vec.val[0],6)); //.109 (error:.006)
           vec_output = vadd_u8(vec_output,vshr_n_u8(vec.val[1],1));
-	  //vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[1],4));
+	  vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[1],4));
 	  vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[1],5));//.593 (error .006)
 	  vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[2],2));
-	  //vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[2],4));
+	  vec_output = vadd_u8(vec_output, vshr_n_u8(vec.val[2],4));
 	  vec_output = vsub_u8(vec_output, vshr_n_u8(vec.val[2],6));//.296 (error .003) 
           vst1_u8(output_arr + 8*i, vec_output);
    }

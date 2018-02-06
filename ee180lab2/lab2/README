@@ -2,6 +2,13 @@ Zach Belateche and Vinh Nguyen
 Hostname ee180-22z.stanford.edu
 
 Single Threaded Optimizations
+Overview
+We optimized the single threaded algorithm using neon intrinsics to unroll the loops, and also refactored the code to calculate less where possible. We also made an approximation of grayscale using shifts and adds/subtracts to approximate the coefficients for the RGB channels when calculating the grayscale. 
+Grayscale Approximation
+The original coefficients, .114, .587, and .289 for the RGB channels, respectively, were approximated as 2^-3 - 2^-6 (.109375), 2^-1 + 2^-3 + 2^-5 (.59375), and 2^-2 + 2^-5 + 2^-6 (.296875). We note that the sum of the approximate coefficients is still 1, so a fully white pixel will process without error. For any channel, the errorin the grayscale component is at worst the error of the coefficient times 255, rounded up. Thus, an upper bound can be constructed for the error of grayscale: ceil(.004625*255) + ceil(.00675*255) + ceil(.003*255) + ceil(.002125*255) = 2+2+1 = 5, which is less than 2% of the maximum value of the pixel. 
+Vectorization Optimizations
+We used intrinsics to load 8 pixels at a time and perform the grayscale on each of them. We also unrolled the loop to a single loop that iterated over the flattened array rather than abstracting it as a matrix. 
+We sped up the sobel filter by removing the redundant x and y loops, which are calculating terms which eventually cancel when the x and y convolutions are added. Instead, for each pixel we calculate the x and y convolution simultaneously and return the total sum. This led to only 6 neighbors that contributed to the final output. For each neighbor a vector of 8 pixels was loaded for each iteration; the convolution for 8 pixels could be calculated at once this way. 
 
 Multi Threaded Optimizations
 For this part, we have our controller thread set up the video input and slice it into two half-frames, each of which is processed by a different thread. To allow for proper convolution, each "half frame" contains one extra line of pixes above or below where it is supposed to be cut off, so the images can be cleanly joined by the controller thread after image processing has taken place. Image processing is done in between two pthread barriers, so that the non-controller thread can't start before its half of the image is ready, and the controller thread can't start combining images before the non-controller's half is processed. This meant that the image processing occurred twice as fast, at the cost of a small slowdown in pre- and post-processing due to splitting the image.
