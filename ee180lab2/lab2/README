@@ -5,5 +5,5 @@ Single Threaded Optimizations
 
 Multi Threaded Optimizations
 For this part, we have our controller thread set up the video input and slice it into two half-frames, each of which is processed by a different thread. To allow for proper convolution, each "half frame" contains one extra line of pixes above or below where it is supposed to be cut off, so the images can be cleanly joined by the controller thread after image processing has taken place. Image processing is done in between two pthread barriers, so that the non-controller thread can't start before its half of the image is ready, and the controller thread can't start combining images before the non-controller's half is processed. This meant that the image processing occurred twice as fast, at the cost of a small slowdown in pre- and post-processing due to splitting the image.
-Thus, we achieved a speedup of 1.73 over the optimized, single threaded version.
-We achieved a total speedup of 5.58 over the unoptimized, single threaded version.
+Thus, we achieved a speedup of 1.30 over the optimized, single threaded version.
+We achieved a total speedup of 16.15 over the unoptimized, single threaded version.
