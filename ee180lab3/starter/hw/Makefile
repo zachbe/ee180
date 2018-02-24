@@ -19,7 +19,7 @@
 
 
 #---------- Basic settings ----------#
-XILINX_SETTINGS      := /opt/Xilinx/14.7/ISE_DS/settings32.sh
+XILINX_SETTINGS      := /afs/ir.stanford.edu/class/ee/xilinx/14.7/ISE_DS/settings32.sh
 LM_LICENSE_FILE      := 27000@cadlic0:5280@vlsi:5280@shimbala:5280@omnipotent:1717@cadlic0.stanford.edu:2100@ee-matlab.stanford.edu
 BIT_FILE             := zed/implementation/system.bit
 WRAP_FILE            := fpga.img

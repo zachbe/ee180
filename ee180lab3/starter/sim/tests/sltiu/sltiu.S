@@ -22,7 +22,7 @@ boot:
     sltiu   $t0, $s0, 0xffff
     nop
     nop
-    sw      $t1, 4($s0)         # Set the test result
+    sw      $t0, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 
 $done:
