@@ -91,7 +91,7 @@ module decode (
     wire isSLLV = (op == `SPECIAL) & (funct == `SLLV);
     wire isSRLV = (op == `SPECIAL) & (funct == `SRLV);
 	wire isSRA = (op == `SPECIAL) & (funct == `SRA);
-	wire isSRAV = (op == `SPECIAL & (funct == `SRAV);
+	wire isSRAV = (op == `SPECIAL) & (funct == `SRAV);
 
     wire isShiftImm = isSLL | isSRL | isSRA;
     wire isShift = isShiftImm | isSLLV | isSRLV | isSRAV;

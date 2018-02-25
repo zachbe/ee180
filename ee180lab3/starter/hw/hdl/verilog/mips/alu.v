@@ -43,7 +43,7 @@ module alu (
             `ALU_SLL:   alu_result = alu_op_y << alu_op_x[4:0];
             `ALU_PASSX: alu_result = alu_op_x;
             `ALU_PASSY: alu_result = alu_op_y;
-			
+			`ALU_MUL:   alu_result = (alu_op_y * alu_op_x)[31:0];
             default:    alu_result = 32'hxxxxxxxx;   // undefined
         endcase
     end
