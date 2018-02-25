@@ -150,11 +150,15 @@ module decode (
 //******************************************************************************
 
     wire use_imm = &{op != `SPECIAL, op != `SPECIAL2, op != `BNE, op != `BEQ}; // where to get 2nd ALU operand from: 0 for RtData, 1 for Immediate
-
+	//edits up to 2/24 (Vinh)
+		//Need to add zero extension as a feature, some immediate
+		//instructions zero extend explicitly, ie ori.
+	wire [31:0] imm_zero_extend = {16'd0, immediate};
+	wire zero_extend_instrs = |{op ==`ORI, op == `ANDI, op == `XORI};
     wire [31:0] imm_sign_extend = {{16{immediate[15]}}, immediate};
     wire [31:0] imm_upper = {immediate, 16'b0};
 
-    wire [31:0] imm = (op == `LUI) ? imm_upper : imm_sign_extend;
+    wire [31:0] imm = zero_extend_instrs ? imm_zero_extend : (op == `LUI) ? imm_upper : imm_sign_extend;
 
 //******************************************************************************
 // forwarding and stalling logic

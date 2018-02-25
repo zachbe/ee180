@@ -150,11 +150,15 @@ module decode (
 //******************************************************************************
 
     wire use_imm = &{op != `SPECIAL, op != `SPECIAL2, op != `BNE, op != `BEQ}; // where to get 2nd ALU operand from: 0 for RtData, 1 for Immediate
-
+	//edits up to 2/24 (Vinh)
+		//Need to add zero extension as a feature, some immediate
+		//instructions zero extend explicitly, ie ori.
+	wire [31:0] imm_zero_extend = {16'd0, immediate};
+	wire zero_extend_instrs = |{op ==`ORI, op == `ANDI};
     wire [31:0] imm_sign_extend = {{16{immediate[15]}}, immediate};
     wire [31:0] imm_upper = {immediate, 16'b0};
 
-    wire [31:0] imm = (op == `LUI) ? imm_upper : imm_sign_extend;
+    wire [31:0] imm = zero_extend_instrs ? imm_zero_extend : (op == `LUI) ? imm_upper : imm_sign_extend;
 
 //******************************************************************************
 // forwarding and stalling logic
@@ -168,8 +172,8 @@ module decode (
 	//Condition is that the destination of the prev. instr's result
 	//is the next instruction's source (incomplete: more complex logic needed for mul, or stalling conditions!)
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
-	wire forward_rt_ex = reg_write_addr_ex == rt_addr, rs_addr!=`ZERO, reg_we_ex};
-    assign rs_data = forward_rs_ex ? alu_result_ex : (forward_rs_mem ? reg_write_data_mem : rs_data_in);
+	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rs_addr!=`ZERO, reg_we_ex};
+    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_data_in;
     assign rt_data = forward_rt_ex ? alu_result_ex : rt_data_in;
 
 	//end edits
