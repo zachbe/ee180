@@ -172,7 +172,7 @@ module decode (
 //******************************************************************************
 
     wire forward_rs_mem = &{rs_addr == reg_write_addr_mem, rs_addr != `ZERO, reg_we_mem};
-	//edits up to 2/24 (Vinh)
+	//edits up to 2/25 (Vinh)
 			//Forwarding Case: consecutive dependent arithmetic ops
 			//i.e A = B+ 5; C = A + 5;
 			// Result of first instr is at x stage; forward to second instr in ID stage to set next ALU operands.
@@ -189,7 +189,7 @@ module decode (
 	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
     assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_addr == `ZERO ? 32'd0 : rs_data_in;
     assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : rt_addr == `ZERO ? 32'd0 : rt_data_in;
-
+	//TODO: rt_data is xxxx during immediate instrs. do something about this latch
 	//end edits
     wire rs_mem_dependency = &{rs_addr == reg_write_addr_ex, mem_read_ex, rs_addr != `ZERO};
 
@@ -233,7 +233,10 @@ module decode (
 // Memory control
 //******************************************************************************
     assign mem_we = |{op == `SW, op == `SB, op == `SC};    // write to memory
-    assign mem_read = 1'b0;                     // use memory data for writing to a register
+	//edits up to 2/25 (Vinh)
+	//formerly 1'b0. 
+    assign mem_read = |{op == `LW, op == `LB, op == `LBU}; // use memory data for writing to a register
+	//end edits
     assign mem_byte = |{op == `SB, op == `LB, op == `LBU};    // memory operations use only one byte
     assign mem_signextend = ~|{op == `LBU};     // sign extend sub-word memory reads
 

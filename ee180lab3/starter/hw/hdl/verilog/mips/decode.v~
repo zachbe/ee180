@@ -108,7 +108,7 @@ module decode (
             {`SLTIU, `DC6}:     alu_opcode = `ALU_SLTU;
             {`ANDI, `DC6}:      alu_opcode = `ALU_AND;
             {`ORI, `DC6}:       alu_opcode = `ALU_OR;
-			{`XORI, `DC6}:		alu_opcode = `ALU_XOR;
+			{`XORI, `DC6}:		alu_opcode = `ALU_XOR; //2/24
             {`LB, `DC6}:        alu_opcode = `ALU_ADD;
             {`LW, `DC6}:        alu_opcode = `ALU_ADD;
             {`LBU, `DC6}:       alu_opcode = `ALU_ADD;
@@ -122,7 +122,7 @@ module decode (
             {`SPECIAL, `SUBU}:  alu_opcode = `ALU_SUBU;
             {`SPECIAL, `AND}:   alu_opcode = `ALU_AND;
             {`SPECIAL, `OR}:    alu_opcode = `ALU_OR;
-			{`SPECIAL, `XOR}: 	alu_opcode = `ALU_XOR;
+			{`SPECIAL, `XOR}: 	alu_opcode = `ALU_XOR; //2/24
             {`SPECIAL, `MOVN}:  alu_opcode = `ALU_PASSX;
             {`SPECIAL, `MOVZ}:  alu_opcode = `ALU_PASSX;
             {`SPECIAL, `SLT}:   alu_opcode = `ALU_SLT;
@@ -132,8 +132,8 @@ module decode (
             {`SPECIAL, `SLLV}:  alu_opcode = `ALU_SLL;
             {`SPECIAL, `SRLV}:  alu_opcode = `ALU_SRL;
 			{`SPECIAL, `SRA} :  alu_opcode = `ALU_SRA; //duplicates sign bit!
-			{`SPECIAL, `SRAV}:  alu_opcode = `ALU_SRA;
-			{`SPECIAL2, `MUL}:  alu_opcode = `ALU_MUL;
+			{`SPECIAL, `SRAV}:  alu_opcode = `ALU_SRA; //2/25
+			{`SPECIAL2, `MUL}:  alu_opcode = `ALU_MUL; //2/24
             // compare rs data to 0, only care about 1 operand
             {`BGTZ, `DC6}:      alu_opcode = `ALU_PASSX;
             {`BLEZ, `DC6}:      alu_opcode = `ALU_PASSX;
@@ -187,8 +187,8 @@ module decode (
 
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
 	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
-    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_data_in;
-    assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : rt_data_in;
+    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_addr == `ZERO ? 32'd0 : rs_data_in;
+    assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : rt_addr == `ZERO ? 32'd0 : rt_data_in;
 
 	//end edits
     wire rs_mem_dependency = &{rs_addr == reg_write_addr_ex, mem_read_ex, rs_addr != `ZERO};
