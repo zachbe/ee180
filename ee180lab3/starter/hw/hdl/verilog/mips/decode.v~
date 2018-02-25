@@ -106,6 +106,7 @@ module decode (
             {`SLTIU, `DC6}:     alu_opcode = `ALU_SLTU;
             {`ANDI, `DC6}:      alu_opcode = `ALU_AND;
             {`ORI, `DC6}:       alu_opcode = `ALU_OR;
+			{`XORI `DC6}:		alu_opcode = `ALU_XOR;
             {`LB, `DC6}:        alu_opcode = `ALU_ADD;
             {`LW, `DC6}:        alu_opcode = `ALU_ADD;
             {`LBU, `DC6}:       alu_opcode = `ALU_ADD;
@@ -119,6 +120,7 @@ module decode (
             {`SPECIAL, `SUBU}:  alu_opcode = `ALU_SUBU;
             {`SPECIAL, `AND}:   alu_opcode = `ALU_AND;
             {`SPECIAL, `OR}:    alu_opcode = `ALU_OR;
+			{`SPECIAL, `XOR}: 	alu_opcode = `ALU_XOR;
             {`SPECIAL, `MOVN}:  alu_opcode = `ALU_PASSX;
             {`SPECIAL, `MOVZ}:  alu_opcode = `ALU_PASSX;
             {`SPECIAL, `SLT}:   alu_opcode = `ALU_SLT;
@@ -172,7 +174,7 @@ module decode (
 	//Condition is that the destination of the prev. instr's result
 	//is the next instruction's source (incomplete: more complex logic needed for mul, or stalling conditions!)
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
-	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rs_addr!=`ZERO, reg_we_ex};
+	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
     assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_data_in;
     assign rt_data = forward_rt_ex ? alu_result_ex : rt_data_in;
 
