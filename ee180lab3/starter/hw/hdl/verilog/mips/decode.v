@@ -173,10 +173,17 @@ module decode (
 			// Result of first instr is at x stage; forward to second instr in ID stage to set next ALU operands.
 	//Condition is that the destination of the prev. instr's result
 	//is the next instruction's source (incomplete: more complex logic needed for mul, or stalling conditions!)
+			//Forwarding Case: offset by 2 dependent arithmetic ops.
+				//Identical to the forward_rs_mem case; but when
+				//there is a dependency with rt (R format instructions).
+	wire forward_rt_mem = &{rt_addr == reg_write_addr_mem, rt_addr != `ZERO, reg_we_mem};	
+			// as with rs, rt depedency signal needs to be created.
+	wire rt_mem_dependency = &{rt_addr == reg_write_addr_ex, mem_read_ex, rt_addr != `ZERO};
+
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
 	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
     assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_data_in;
-    assign rt_data = forward_rt_ex ? alu_result_ex : rt_data_in;
+    assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : rt_data_in;
 
 	//end edits
     wire rs_mem_dependency = &{rs_addr == reg_write_addr_ex, mem_read_ex, rs_addr != `ZERO};
@@ -187,7 +194,7 @@ module decode (
     wire isALUImm = |{op == `ADDI, op == `ADDIU, op == `SLTI, op == `SLTIU, op == `ANDI, op == `ORI};
     wire read_from_rt = ~|{isLUI, jump_target, isALUImm, mem_read};
 
-    assign stall = rs_mem_dependency & read_from_rs;
+    assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
 
     assign jr_pc = rs_data;
     assign mem_write_data = rt_data;
