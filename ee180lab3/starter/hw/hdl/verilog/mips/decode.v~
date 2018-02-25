@@ -129,6 +129,8 @@ module decode (
             {`SPECIAL, `SRL}:   alu_opcode = `ALU_SRL;
             {`SPECIAL, `SLLV}:  alu_opcode = `ALU_SLL;
             {`SPECIAL, `SRLV}:  alu_opcode = `ALU_SRL;
+			{`SPECIAL, `SRA} :  alu_opcode = `ALU_SRA; //duplicates sign bit!
+			{`SPECIAL, `SRAV}:  alu_opcode = `ALU_SRA;
             // compare rs data to 0, only care about 1 operand
             {`BGTZ, `DC6}:      alu_opcode = `ALU_PASSX;
             {`BLEZ, `DC6}:      alu_opcode = `ALU_PASSX;
