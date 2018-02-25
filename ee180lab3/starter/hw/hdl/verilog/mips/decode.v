@@ -168,8 +168,8 @@ module decode (
 	//Condition is that the destination of the prev. instr's result
 	//is the next instruction's source (incomplete: more complex logic needed for mul, or stalling conditions!)
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
-	wire forward_rt_ex = reg_write_addr_ex == rt_addr, rs_addr!=`ZERO, reg_we_ex};
-    assign rs_data = forward_rs_ex ? alu_result_ex : (forward_rs_mem ? reg_write_data_mem : rs_data_in);
+	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rs_addr!=`ZERO, reg_we_ex};
+    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_data_in;
     assign rt_data = forward_rt_ex ? alu_result_ex : rt_data_in;
 
 	//end edits
