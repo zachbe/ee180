@@ -22,7 +22,7 @@ boot:
     ori     $t0, $t0, 0xbeef
     xori    $t3, $t0, 0xFFFF      # D = xor(A,0x0000FFFF) = {A[31:16,~A[15:0]}
 	and		$t2, $t3, $t0 	#C = A & D = upper(A)
-	sub     $t5, $t0, $t2 	#E = A - C = ~A[15:0];
+	sub     $t5, $t3, $t2 	#E = D - C = ~A[15:0];
 	xori 	$t4, $t5, 1		#F = xor(E, 1) = {16{1'b0},~A[15:1], A[0]}	
     xor 	$t4, $t0, $t4	#F = xor(F, A) = {A[31:16],0xFFFE} 
 	xori 	$t4, $t4, 0xFFFF	#F = {A[31:16], 0x0001}
