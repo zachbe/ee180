@@ -44,7 +44,11 @@ module decode (
 
     input reg_we_mem,
     input [4:0] reg_write_addr_mem,
-    input [31:0] reg_write_data_mem
+    input [31:0] reg_write_data_mem,
+
+	input reg_we_wb,
+	input [4:0] reg_write_addr_wb,
+	input [31:0] reg_write_data_wb
 );
 
 //******************************************************************************
