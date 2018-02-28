@@ -80,7 +80,7 @@ module decode (
 // jump instructions decode
 //******************************************************************************
 
-    wire isJ    = (op == `J);
+    wire isJ    = (op == `J) & (funct != `JR);
     wire isJR   = (op == `J) & (funct == `JR);
 
 //******************************************************************************
@@ -195,7 +195,7 @@ module decode (
     wire rs_mem_dependency = &{rs_addr == reg_write_addr_ex, mem_read_ex, rs_addr != `ZERO};
 
     wire isLUI = op == `LUI;
-    wire read_from_rs = ~|{isLUI, jump_target, isShiftImm, jump_reg};
+    wire read_from_rs = ~|{isLUI, jump_target, isShiftImm};
 
     wire isALUImm = |{op == `ADDI, op == `ADDIU, op == `SLTI, op == `SLTIU, op == `ANDI, op == `ORI};
     wire read_from_rt = ~|{isLUI, jump_target, isALUImm, mem_read};
