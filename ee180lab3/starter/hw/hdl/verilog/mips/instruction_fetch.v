@@ -25,7 +25,7 @@ module instruction_fetch (
 
     wire [31:0] pc_next =   jump_reg ? jr_pc : 
                             jump_branch ? pc_id_p4 + jr_pc : 
-                            jump_target ? j_addr : pc_id_p4;
+                            jump_target ? j_addr : pc_id + 3'h4;
 
     dffare #(32) pc_reg (.clk(clk), .r(rst), .en(en), .d(pc_next), .q(pc));
 
