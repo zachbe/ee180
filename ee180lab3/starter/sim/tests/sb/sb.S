@@ -25,8 +25,8 @@ boot:
     ori     $t1, $0, 0xFF01		#A = 0xFF01
     sb      $t1, -4($t0)		# the actual value stored should be 1
     lw      $t1, -4($t0)
-    sb      $t1, 4($s0)         # Set the test result
-    sb      $s1, 0($s0)         # Set 'done'
+    sw      $t1, 4($s0)         # Set the test result
+    sw      $s1, 0($s0)         # Set 'done'
 
 $done:
     j       $done

@@ -21,9 +21,9 @@ boot:
     lui     $t0, 0xdeaf         # A = 0xdeafbeef
     ori     $t0, $t0, 0xbeef
     ori     $t1, $0, 4
-    sllv    $t1, $t0, $t1       # B = 0xdeafbeef << 4 = 0xdeafbee0
-    lui     $t3, 0xdeaf         # C = 0xdeafbee0
-    ori     $t3, $t3, 0xbee0
+    sllv    $t1, $t0, $t1       # B = 0xdeafbeef << 4 = 0xeafbeef0
+    lui     $t3, 0xeafb         # C = 0xeafbeef0
+    ori     $t3, $t3, 0xeef0
     subu    $t3, $t1, $t3       # D = B - C = 0
     sltiu   $v0, $t3, 1
     sw      $v0, 4($s0)         # Set the test result

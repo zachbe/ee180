@@ -113,7 +113,12 @@ module mips_cpu (
         // inputs for forwarding/stalling from M
         .reg_we_mem         (reg_we_mem),
         .reg_write_addr_mem (reg_write_addr_mem),
-        .reg_write_data_mem (reg_write_data_mem)
+        .reg_write_data_mem (reg_write_data_mem),
+		
+		//inputs for forwarding from W
+		.reg_we_wb 			(reg_we_wb),
+		.reg_write_addr_wb  (reg_write_addr_wb),
+		.reg_write_data_wb  (reg_write_data_wb)
     );
 
     // Load-linked / Store-conditional
