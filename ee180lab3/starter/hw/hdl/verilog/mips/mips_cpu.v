@@ -58,6 +58,7 @@ module mips_cpu (
         .instr_id       (instr_id[25:0]),
         .jump_reg       (jump_reg_id),
         .jr_pc          (jr_pc_id),
+        .jump_branch    (jump_branch_id),
         .pc             (pc_if)
     );
 

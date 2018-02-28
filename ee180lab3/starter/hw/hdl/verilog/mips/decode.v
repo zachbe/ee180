@@ -84,8 +84,8 @@ module decode (
 // jump instructions decode
 //******************************************************************************
 
-    wire isJ    = (op == `J) & (funct != `JR);
-    wire isJR   = (op == `J) & (funct == `JR);
+    wire isJ    = (op == `J);
+    wire isJR   = (op == 6'd0) & (funct == `JR);
 
 //******************************************************************************
 // shift instruction decode
@@ -211,7 +211,7 @@ module decode (
 
     assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
 
-    assign jr_pc = rs_data;
+    assign jr_pc = isJR ? rs_data : {14'b0, immediate, 2'b0} ;
     assign mem_write_data = rt_data;
 
 //******************************************************************************
@@ -266,9 +266,14 @@ module decode (
 //******************************************************************************
 
     wire isEqual = rs_data == rt_data;
+    wire isGTEZ = $signed(rs_data) >= $signed(32'b0);
+    wire isLTEZ = $signed(rs_data) <= $signed(32'b0);
 
     assign jump_branch = |{isBEQ & isEqual,
-                           isBNE & ~isEqual};
+                           isBNE & ~isEqual,
+                           isBGEZNL & isGTEZ,
+                           isBLEZ & isLTEZ,
+                           isBLTZNL & ~isGTEZ};
 
     assign jump_target = isJ;
     assign jump_reg = isJR;
