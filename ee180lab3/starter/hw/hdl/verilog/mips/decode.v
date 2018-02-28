@@ -81,6 +81,7 @@ module decode (
 //******************************************************************************
 
     wire isJ    = (op == `J);
+    wire isJR   = (op == `JR);
 
 //******************************************************************************
 // shift instruction decode
@@ -261,6 +262,6 @@ module decode (
                            isBNE & ~isEqual};
 
     assign jump_target = isJ;
-    assign jump_reg = 1'b0;
+    assign jump_reg = isJR;
 
 endmodule
