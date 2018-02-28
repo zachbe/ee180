@@ -34,6 +34,7 @@ module alu (
             `ALU_ADDU:  alu_result = alu_op_x + alu_op_y;
             `ALU_AND:   alu_result = alu_op_x & alu_op_y;
             `ALU_OR:    alu_result = alu_op_x | alu_op_y;
+			`ALU_NOR: 	alu_result = alu_op_x ~| alu_op_y;
             `ALU_SUB:   alu_result = alu_op_x - alu_op_y;
             `ALU_SUBU:  alu_result = alu_op_x - alu_op_y;
             `ALU_SLTU:  alu_result = alu_op_x < alu_op_y;

@@ -190,7 +190,7 @@ module decode (
 			// as with rs, rt depedency signal needs to be created.
 	wire rt_mem_dependency = &{rt_addr == reg_write_addr_ex, mem_read_ex, rt_addr != `ZERO};
 	wire forward_rt_wb = &{rt_addr == reg_write_addr_wb, rt_addr!=`ZERO, reg_we_wb};
-	wire forward rs_wb = &{rs_addr == reg_write_addr_wb, rs_addr!=`ZERO, reg_we_wb};
+	wire forward_rs_wb = &{rs_addr == reg_write_addr_wb, rs_addr!=`ZERO, reg_we_wb};
 
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
 	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
