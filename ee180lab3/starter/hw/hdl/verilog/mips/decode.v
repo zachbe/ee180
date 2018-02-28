@@ -80,8 +80,8 @@ module decode (
 // jump instructions decode
 //******************************************************************************
 
-    wire isJ    = (op == `J) & (funct != `JR);
-    wire isJR   = (op == `J) & (funct == `JR);
+    wire isJ    = (op == `J);
+    wire isJR   = (op == 6'd0) & (funct == `JR);
 
 //******************************************************************************
 // shift instruction decode
