@@ -202,7 +202,7 @@ module decode (
 
     assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
 
-    assign jr_pc = rs_data;
+    assign jr_pc = isJR ? rs_data : {14'b0, immediate, 2'b0} ;
     assign mem_write_data = rt_data;
 
 //******************************************************************************
