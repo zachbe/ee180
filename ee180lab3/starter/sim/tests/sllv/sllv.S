@@ -1,15 +1,14 @@
 ###############################################################################
-# File         : lw.S
+# File         : srlv.S
 # Project      : EE180 Lab 2: MIPS
 #
 # Standards/Formatting:
 #   MIPS gas, soft tab, 80 column
 #
 # Description:
-#   Test the functionality of the 'lw' instruction.
+#   Test the functionality of the 'sllv' instruction.
 #
 ###############################################################################
-
 
     .section .boot, "x"
     .balign 4
@@ -19,23 +18,15 @@
 boot:
     lui     $s0, 0x8002         # Load the base address of the status/test registers
     ori     $s1, $0, 1          # Prepare the 'done' status
-    lui     $t0, 0              # Load some valid address 0x00003210 to register $t0
-    nop
-    ori     $t0, $t0, 0x3210
-    nop
-    nop
-    nop
-    sw      $0, 0($t0)
-    ori     $t1, $0, 1
-    nop
-    nop
-    nop
-    sw      $t1, 0($t0)
-    nop
-    nop
-    nop
-    lw      $t2, 0($t0)
-    sw      $t2, 4($s0)         # Set the test result
+    lui     $t0, 0xdeaf         # A = 0xdeafbeef
+    ori     $t0, $t0, 0xbeef
+    ori     $t1, $0, 4
+    sllv    $t1, $t0, $t1       # B = 0xdeafbeef << 4 = 0xdeafbee0
+    lui     $t3, 0xdeaf         # C = 0xdeafbee0
+    ori     $t3, $t3, 0xbee0
+    subu    $t3, $t1, $t3       # D = B - C = 0
+    sltiu   $v0, $t3, 1
+    sw      $v0, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 
 $done:

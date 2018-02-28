@@ -13,10 +13,7 @@ Producers to ID stage
 -load/arith, nop, nop, use: w -> id Only when not either load/arith,nop, use or arith, use
 -arith, use: ex -> id.
 
-Producers to ex stage
--arith/load addr, load: mem -> ex
--arith addr, nop, load: w-> ex   arith/load addr, load forwarding takes precedence 
-
+Producers to ex stage: load address still has to go through id/alu to do offset, so no forwarding is possible
 
 Stalling Cases
 load-use (load arith, load addr load, load store)

@@ -6,7 +6,7 @@
 #   MIPS gas, soft tab, 80 column
 #
 # Description:
-#   Test the functionality of the 'lw' instruction.
+#   Test the functionality of the 'sb' instruction.
 #
 ###############################################################################
 
@@ -19,24 +19,14 @@
 boot:
     lui     $s0, 0x8002         # Load the base address of the status/test registers
     ori     $s1, $0, 1          # Prepare the 'done' status
-    lui     $t0, 0              # Load some valid address 0x00003210 to register $t0
-    nop
+    lui     $t0, 0              # Load 0x00003210 to register $t0
     ori     $t0, $t0, 0x3210
-    nop
-    nop
-    nop
-    sw      $0, 0($t0)
-    ori     $t1, $0, 1
-    nop
-    nop
-    nop
-    sw      $t1, 0($t0)
-    nop
-    nop
-    nop
-    lw      $t2, 0($t0)
-    sw      $t2, 4($s0)         # Set the test result
-    sw      $s1, 0($s0)         # Set 'done'
+    sw      $0, -4($t0) 		#test neg offset	
+    ori     $t1, $0, 0xFF01		#A = 0xFF01
+    sb      $t1, -4($t0)		# the actual value stored should be 1
+    lw      $t1, -4($t0)
+    sb      $t1, 4($s0)         # Set the test result
+    sb      $s1, 0($s0)         # Set 'done'
 
 $done:
     j       $done

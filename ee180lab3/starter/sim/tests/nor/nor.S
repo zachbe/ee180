@@ -1,12 +1,12 @@
 ###############################################################################
-# File         : lw.S
+# File         : addu.S
 # Project      : EE180 Lab 2: MIPS
 #
 # Standards/Formatting:
 #   MIPS gas, soft tab, 80 column
 #
 # Description:
-#   Test the functionality of the 'lw' instruction.
+#   Test the functionality of the 'nor' instruction.
 #
 ###############################################################################
 
@@ -19,22 +19,12 @@
 boot:
     lui     $s0, 0x8002         # Load the base address of the status/test registers
     ori     $s1, $0, 1          # Prepare the 'done' status
-    lui     $t0, 0              # Load some valid address 0x00003210 to register $t0
-    nop
-    ori     $t0, $t0, 0x3210
-    nop
-    nop
-    nop
-    sw      $0, 0($t0)
-    ori     $t1, $0, 1
-    nop
-    nop
-    nop
-    sw      $t1, 0($t0)
-    nop
-    nop
-    nop
-    lw      $t2, 0($t0)
+    lui     $t0, 0xffff         # A = 0xfffffffd
+    ori     $t0, $t0, 0xfffd
+    nor		$t0, $t0, $t0		# A = 2
+    ori     $t1, $0, 0x0        # B = 0
+	nor 	$t1, $t1, $0		# B = 0xffffffff
+    addu    $t2, $t0, $t1       # C = A+B = 1
     sw      $t2, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 

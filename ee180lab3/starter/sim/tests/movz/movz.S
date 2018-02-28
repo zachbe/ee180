@@ -1,15 +1,14 @@
 ###############################################################################
-# File         : lw.S
+# File         : movn.S
 # Project      : EE180 Lab 2: MIPS
 #
 # Standards/Formatting:
 #   MIPS gas, soft tab, 80 column
 #
 # Description:
-#   Test the functionality of the 'lw' instruction.
+#   Test the functionality of the 'movz' instruction.
 #
 ###############################################################################
-
 
     .section .boot, "x"
     .balign 4
@@ -19,23 +18,16 @@
 boot:
     lui     $s0, 0x8002         # Load the base address of the status/test registers
     ori     $s1, $0, 1          # Prepare the 'done' status
-    lui     $t0, 0              # Load some valid address 0x00003210 to register $t0
-    nop
-    ori     $t0, $t0, 0x3210
-    nop
-    nop
-    nop
-    sw      $0, 0($t0)
-    ori     $t1, $0, 1
-    nop
-    nop
-    nop
-    sw      $t1, 0($t0)
-    nop
-    nop
-    nop
-    lw      $t2, 0($t0)
-    sw      $t2, 4($s0)         # Set the test result
+    lui     $t0, 0xdeaf
+    ori     $t0, $t0, 0xbeef
+    ori     $t1, $0, 0
+    movz    $t2, $t0, $0       # $t2 gets 0xdeafbeef
+    movz    $t1, $t0, $s1        # $t1 remains 0
+    subu    $t3, $t2, $t0
+    sltiu   $v0, $t3, 1
+    sltiu   $v1, $t1, 1
+    and     $v0, $v0, $v1
+    sw      $v0, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 
 $done:
