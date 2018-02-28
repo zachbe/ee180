@@ -185,11 +185,15 @@ module decode (
 	wire forward_rt_mem = &{rt_addr == reg_write_addr_mem, rt_addr != `ZERO, reg_we_mem};	
 			// as with rs, rt depedency signal needs to be created.
 	wire rt_mem_dependency = &{rt_addr == reg_write_addr_ex, mem_read_ex, rt_addr != `ZERO};
+	wire forward_rt_wb = &{rt_addr == reg_write_addr_wb, rt_addr!=`ZERO, reg_we_wb};
+	wire forward rs_wb = &{rs_addr == reg_write_addr_wb, rs_addr!=`ZERO, reg_we_wb};
 
 	wire forward_rs_ex = &{reg_write_addr_ex == rs_addr, rs_addr!=`ZERO, reg_we_ex};
 	wire forward_rt_ex = &{reg_write_addr_ex == rt_addr, rt_addr!=`ZERO, reg_we_ex};
-    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : rs_addr == `ZERO ? 32'd0 : rs_data_in;
-    assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : rt_addr == `ZERO ? 32'd0 : rt_data_in;
+	//NOTE: the progression of ternary operators (ex->mem->wb) leads to the most recent value of rs or rt being forwarded, which is as intended; if 
+	//we have three dependent arithmetic ops, we need to forward the value from the second (most recent; in ex) operation.
+    assign rs_data = forward_rs_ex ? alu_result_ex : forward_rs_mem ? reg_write_data_mem : forward_rs_wb ? reg_write_data_wb : rs_addr == `ZERO ? 32'd0 : rs_data_in;
+    assign rt_data = forward_rt_ex ? alu_result_ex : forward_rt_mem? reg_write_data_mem : forward_rt_wb ? reg_write_data_wb : rt_addr == `ZERO ? 32'd0 : rt_data_in;
 	//TODO: rt_data is xxxx during immediate instrs. do something about this latch
 	//end edits
     wire rs_mem_dependency = &{rs_addr == reg_write_addr_ex, mem_read_ex, rs_addr != `ZERO};
