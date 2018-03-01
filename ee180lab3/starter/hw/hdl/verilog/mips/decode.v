@@ -118,6 +118,7 @@ module decode (
 			{`XORI, `DC6}:		alu_opcode = `ALU_XOR; //2/24
             {`LB, `DC6}:        alu_opcode = `ALU_ADD;
             {`LW, `DC6}:        alu_opcode = `ALU_ADD;
+            {`LL, `DC6}:        alu_opcode = `ALU_ADD;
             {`LBU, `DC6}:       alu_opcode = `ALU_ADD;
             {`SB, `DC6}:        alu_opcode = `ALU_ADD;
             {`SW, `DC6}:        alu_opcode = `ALU_ADD;
@@ -247,7 +248,7 @@ module decode (
     assign mem_we = |{op == `SW, op == `SB, op == `SC};    // write to memory
 	//edits up to 2/25 (Vinh)
 	//formerly 1'b0. 
-    assign mem_read = |{op == `LW, op == `LB, op == `LBU}; // use memory data for writing to a register
+    assign mem_read = |{op == `LW, op == `LB, op == `LBU, op == `LL}; // use memory data for writing to a register
 	//end edits
     assign mem_byte = |{op == `SB, op == `LB, op == `LBU};    // memory operations use only one byte
     assign mem_signextend = ~|{op == `LBU};     // sign extend sub-word memory reads
@@ -258,10 +259,11 @@ module decode (
     assign mem_sc_id = (op == `SC);
 
     // 'atomic_id' is high when a load-linked has not been followed by a store.
-    assign atomic_id = 1'b0;
+    assign atomic_id = ((op == `LL) | atomic_ex) //either we're starting an ll or we're still atomic
+                        & (!|{op == `SW, op == `SB, op == `SC}); //if we store we're no longer atomic
 
     // 'mem_sc_mask_id' is high when a store conditional should not store
-    assign mem_sc_mask_id = 1'b0;
+    assign mem_sc_mask_id = ~atomic_ex;
 
 //******************************************************************************
 // Branch resolution
