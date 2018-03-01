@@ -260,7 +260,7 @@ module decode (
 
     // 'atomic_id' is high when a load-linked has not been followed by a store.
     assign atomic_id = ((op == `LL) | atomic_ex) //either we're starting an ll or we're still atomic
-                        & (!|{op == `SW, op == `SB, op == `SC}); //if we store we're no longer atomic
+                        & (~|{op == `SW, op == `SB, op == `SC}); //if we store we're no longer atomic
 
     // 'mem_sc_mask_id' is high when a store conditional should not store
     assign mem_sc_mask_id = ~atomic_ex;
