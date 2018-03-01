@@ -87,6 +87,7 @@ module decode (
     wire isJ    = (op == `J);
     wire isJR   = (op == 6'd0) & (funct == `JR);
     wire isJAL  = (op == `JAL);
+    wire isJALR = (op == 6'd0) & (funct == `JALR);
 
 //******************************************************************************
 // shift instruction decode
@@ -212,7 +213,7 @@ module decode (
 
     assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
 
-    assign jr_pc = isJR ? rs_data : {14'b0, immediate, 2'b0} ;
+    assign jr_pc = (isJR | isJALR) ? rs_data : {14'b0, immediate, 2'b0} ;
     assign mem_write_data = rt_data;
 
 //******************************************************************************
@@ -229,8 +230,8 @@ module decode (
     // for immediate operations, use Imm
     // otherwise use rt
 
-    assign alu_op_y = (isJAL) ? (pc + 8) : ((use_imm) ? imm : rt_data);
-    assign reg_write_addr = (isJAL) ? `RA : ((use_imm) ? rt_addr : rd_addr);
+    assign alu_op_y = (isJAL | isJALR) ? (pc + 8) : ((use_imm) ? imm : rt_data);
+    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
 
     // determine when to write back to a register (any operation that isn't an
     // unconditional store, non-linking branch, or non-linking jump)
