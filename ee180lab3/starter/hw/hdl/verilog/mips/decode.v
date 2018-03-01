@@ -279,6 +279,6 @@ module decode (
                            isBGTZ & ~isLTEZ};
 
     assign jump_target = isJ | isJAL;
-    assign jump_reg = isJR;
+    assign jump_reg = isJR | isJALR;
 
 endmodule
