@@ -233,7 +233,7 @@ module decode (
     // otherwise use rt
 
     assign alu_op_y = (isJAL | isJALR) ? (pc + 8) : ((use_imm) ? imm : rt_data);
-    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm |  (op == `SC)) ? rt_addr : rd_addr);
+    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
 
     // determine when to write back to a register (any operation that isn't an
     // unconditional store, non-linking branch, or non-linking jump)
@@ -264,7 +264,7 @@ module decode (
                         & (~|{op == `SW, op == `SB, op == `SC}); //if we store we're no longer atomic
 
     // 'mem_sc_mask_id' is high when a store conditional should not store
-    assign mem_sc_mask_id = 1'b0;
+    assign mem_sc_mask_id = ~atomic_ex & (op == `SC);
 
 //******************************************************************************
 // Branch resolution
