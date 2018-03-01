@@ -59,7 +59,7 @@ $done:
     j       $done
     nop
 
-$fail
+$fail:
     sw      $0, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
     j       $done
