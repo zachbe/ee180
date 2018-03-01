@@ -122,6 +122,7 @@ module decode (
             {`LBU, `DC6}:       alu_opcode = `ALU_ADD;
             {`SB, `DC6}:        alu_opcode = `ALU_ADD;
             {`SW, `DC6}:        alu_opcode = `ALU_ADD;
+            {`SC, `DC6}:        alu_opcode = `ALU_ADD;
             {`BEQ, `DC6}:       alu_opcode = `ALU_SUBU;
             {`BNE, `DC6}:       alu_opcode = `ALU_SUBU;
             {`SPECIAL, `ADD}:   alu_opcode = `ALU_ADD;
@@ -232,7 +233,7 @@ module decode (
     // otherwise use rt
 
     assign alu_op_y = (isJAL | isJALR) ? (pc + 8) : ((use_imm) ? imm : rt_data);
-    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
+    assign reg_write_addr = (op == `SC) ? `RT : (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
 
     // determine when to write back to a register (any operation that isn't an
     // unconditional store, non-linking branch, or non-linking jump)
