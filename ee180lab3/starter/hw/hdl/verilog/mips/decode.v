@@ -273,7 +273,8 @@ module decode (
                            isBNE & ~isEqual,
                            isBGEZNL & isGTEZ,
                            isBLEZ & isLTEZ,
-                           isBLTZNL & ~isGTEZ};
+                           isBLTZNL & ~isGTEZ,
+                           isBGTZ & ~isLTEZ};
 
     assign jump_target = isJ;
     assign jump_reg = isJR;
