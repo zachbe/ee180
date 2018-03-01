@@ -233,7 +233,7 @@ module decode (
     // otherwise use rt
 
     assign alu_op_y = (isJAL | isJALR) ? (pc + 8) : ((use_imm) ? imm : rt_data);
-    assign reg_write_addr = (op == `SC) ? `RT : (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
+    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm |  (op == `SC)) ? rt_addr : rd_addr);
 
     // determine when to write back to a register (any operation that isn't an
     // unconditional store, non-linking branch, or non-linking jump)
