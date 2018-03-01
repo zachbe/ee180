@@ -249,7 +249,7 @@ module decode (
     assign mem_we = |{op == `SW, op == `SB, op == `SC};    // write to memory
 	//edits up to 2/25 (Vinh)
 	//formerly 1'b0. 
-    assign mem_read = |{op == `LW, op == `LB, op == `LBU, op == `LL}; // use memory data for writing to a register
+    assign mem_read = |{op == `LW, op == `LB, op == `LBU}; // use memory data for writing to a register
 	//end edits
     assign mem_byte = |{op == `SB, op == `LB, op == `LBU};    // memory operations use only one byte
     assign mem_signextend = ~|{op == `LBU};     // sign extend sub-word memory reads
