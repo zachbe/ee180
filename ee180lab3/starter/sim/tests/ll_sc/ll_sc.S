@@ -48,6 +48,7 @@ boot:
     nop
     bnez    $t2, $fail
     ori     $t2, $0, 1
+    sw      $t2, 0($t0) #store 1
     nop
     nop
     nop
