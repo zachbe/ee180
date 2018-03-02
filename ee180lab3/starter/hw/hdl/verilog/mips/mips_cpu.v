@@ -34,7 +34,7 @@ module mips_cpu (
     wire atomic_id, atomic_ex;
     wire [3:0] alu_opcode_id, alu_opcode_ex;
     wire [31:0] alu_op_x_id, alu_op_y_id, alu_op_x_ex, alu_op_y_ex;
-    wire [31:0] alu_result_ex, alu_result_mem;
+    wire [31:0] alu_result_ex, alu_result_mem, alu_sc_result_ex;
     wire alu_op_y_zero_ex;
     wire mem_we_id, mem_we_ex;
     wire mem_read_id, mem_read_ex, mem_read_mem;
@@ -162,7 +162,7 @@ module mips_cpu (
 
     // needed for M stage
     wire [31:0] sc_result = {{31{1'b0}},(mem_sc_ex & mem_we_ex)};
-    wire [31:0] alu_sc_result_ex = (mem_sc_ex) ? sc_result : alu_result_ex;   // TODO: Need to conditionally inject SC value
+    assign alu_sc_result_ex = (mem_sc_ex) ? sc_result : alu_result_ex;   // TODO: Need to conditionally inject SC value
     dffare #(32) alu_result_ex2mem (.clk(clk), .r(rst), .en(en), .d(alu_sc_result_ex), .q(alu_result_mem));
 	//edits up to 2/25 (Vinh)
 	//formerly .d(1'b0), .q()
