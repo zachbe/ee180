@@ -39,13 +39,7 @@ boot:
     nop
     nop
     sw      $0, 0($t0) #should break it
-    nop
-    nop
-    nop
     sc      $t2, 0($t0) #t2 should be zero
-    nop
-    nop
-    nop
     bnez    $t2, $fail
     ori     $t2, $0, 1
     sw      $t2, 0($t0) #store 1
@@ -57,9 +51,6 @@ boot:
     nop
     nop
     sc      $t2, 0($t0)         # t2 should be 1
-    nop
-    nop
-    nop
     lw      $t3, 0($t0)         #t3 should be 1
     and     $t2, $t3, $t2       #boht are one
     sw      $t2, 4($s0)         # Set the test result
