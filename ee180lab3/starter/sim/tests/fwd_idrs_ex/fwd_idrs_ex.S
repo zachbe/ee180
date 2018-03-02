@@ -20,17 +20,7 @@ boot:
     ori     $s1, $0, 1          # Prepare the 'done' status
     ori     $t0, $0, 0xfff0
     ori     $t1, $t0, 0x000f
-    nop
-    nop
-    nop
-    nop
-    nop
     xori    $t2, $t1, 0xfffe
-    nop
-    nop
-    nop
-    nop
-    nop
     sw      $t2, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 
