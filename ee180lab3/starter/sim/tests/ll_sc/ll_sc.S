@@ -44,6 +44,7 @@ boot:
     nop
     sc      $t2, 0($t0) #t2 should be zero
     bnez    $t2, $fail
+    ori     $t2, $0, 1
     nop
     nop
     nop
