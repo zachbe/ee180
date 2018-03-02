@@ -32,9 +32,6 @@ boot:
     sw      $t2, 0($t0) #store 1
     ll      $t2, 0($t0) #load linked
     sc      $t2, 0($t0)         # t2 should be 1
-    nop
-    nop
-    nop
     lw      $t3, 0($t0)         #t3 should be 1
     and     $t2, $t3, $t2       #boht are one
     sw      $t2, 4($s0)         # Set the test result
