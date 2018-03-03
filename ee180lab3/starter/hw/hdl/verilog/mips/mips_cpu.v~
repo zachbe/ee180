@@ -34,7 +34,7 @@ module mips_cpu (
     wire atomic_id, atomic_ex;
     wire [3:0] alu_opcode_id, alu_opcode_ex;
     wire [31:0] alu_op_x_id, alu_op_y_id, alu_op_x_ex, alu_op_y_ex;
-    wire [31:0] alu_result_ex, alu_result_mem;
+    wire [31:0] alu_result_ex, alu_result_mem, alu_sc_result_ex;
     wire alu_op_y_zero_ex;
     wire mem_we_id, mem_we_ex;
     wire mem_read_id, mem_read_ex, mem_read_mem;
@@ -58,6 +58,7 @@ module mips_cpu (
         .instr_id       (instr_id[25:0]),
         .jump_reg       (jump_reg_id),
         .jr_pc          (jr_pc_id),
+        .jump_branch    (jump_branch_id),
         .pc             (pc_if)
     );
 
@@ -107,7 +108,7 @@ module mips_cpu (
         // inputs for forwarding/stalling from X
         .reg_we_ex          (reg_we_ex),
         .reg_write_addr_ex  (reg_write_addr_ex),
-        .alu_result_ex      (alu_result_ex),
+        .alu_result_ex      (alu_sc_result_ex),
         .mem_read_ex        (mem_read_ex),
 
         // inputs for forwarding/stalling from M
@@ -123,7 +124,7 @@ module mips_cpu (
 
     // Load-linked / Store-conditional
     wire atomic_en = en & mem_read_id;
-    dffarre       atomic  (.clk(clk), .ar(rst), .r(rst_id), .en(atomic_en), .d(mem_atomic_id), .q(mem_atomic_ex));
+    dffarre       atomic  (.clk(clk), .ar(rst), .r(~rst), .en(en_if), .d(mem_atomic_id), .q(mem_atomic_ex));
     dffarre       sc      (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_sc_id), .q(mem_sc_ex));
 
     // needed for X stage
@@ -161,7 +162,7 @@ module mips_cpu (
 
     // needed for M stage
     wire [31:0] sc_result = {{31{1'b0}},(mem_sc_ex & mem_we_ex)};
-    wire [31:0] alu_sc_result_ex = alu_result_ex;   // TODO: Need to conditionally inject SC value
+    assign alu_sc_result_ex = (mem_sc_ex) ? sc_result : alu_result_ex;   // TODO: Need to conditionally inject SC value
     dffare #(32) alu_result_ex2mem (.clk(clk), .r(rst), .en(en), .d(alu_sc_result_ex), .q(alu_result_mem));
 	//edits up to 2/25 (Vinh)
 	//formerly .d(1'b0), .q()
@@ -179,10 +180,17 @@ module mips_cpu (
     //assign mem_read_mem = 1'b0;
 	//end edits
     assign mem_read_en = mem_read_ex;
-    assign mem_write_en[3] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b00));
+	//begin edits up to 2/28 (Vinh)
+		//The endianness seems to be mixed up, sb writes to the MSB rather than the LSB. Switch order of write_en signals
+    /*assign mem_write_en[3] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b00));
     assign mem_write_en[2] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b01));
     assign mem_write_en[1] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b10));
-    assign mem_write_en[0] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b11));
+    assign mem_write_en[0] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b11));*/
+	assign mem_write_en[0] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b00));
+    assign mem_write_en[1] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b01));
+    assign mem_write_en[2] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b10));
+    assign mem_write_en[3] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b11));
+	//end edits
     assign mem_addr = alu_result_ex;
     assign mem_write_data = (mem_byte_ex) ? {4{mem_write_data_ex[7:0]}} : mem_write_data_ex;
     assign mem_read_data_byte_select =  (alu_result_mem[1:0] == 2'b00) ? mem_read_data[31:24] :
