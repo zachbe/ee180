@@ -22,7 +22,8 @@ boot:
     lui     $t0, 0              # Load 0x00003210 to register $t0
     ori     $t0, $t0, 0x3210
     sw      $0, -4($t0) 		#test neg offset	
-    ori     $t1, $0, 0xFF01		#A = 0xFF01
+    lui     $t1, $0, 0xFF01		#A = 0x01FFFFFF
+	ori		$t1, $0, 0xFFFF
     sb      $t1, -4($t0)		# the actual value stored should be 1
     lw      $t1, -4($t0)
     sw      $t1, 4($s0)         # Set the test result
