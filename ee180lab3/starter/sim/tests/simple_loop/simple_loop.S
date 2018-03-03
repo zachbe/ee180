@@ -41,7 +41,7 @@ loop_cond:
 	bne		$t7, $t6, loop
 	addiu	$t6, $t6, 1
 	lw 		$t1, 0($t0)
-	addiu 	$v0, $t1, -127
+	addiu 	$v0, $t1, -119
     sw      $v0, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 
