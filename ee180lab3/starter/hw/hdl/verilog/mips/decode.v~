@@ -84,8 +84,10 @@ module decode (
 // jump instructions decode
 //******************************************************************************
 
-    wire isJ    = (op == `J) & (funct != `JR);
-    wire isJR   = (op == `J) & (funct == `JR);
+    wire isJ    = (op == `J);
+    wire isJR   = (op == 6'd0) & (funct == `JR);
+    wire isJAL  = (op == `JAL);
+    wire isJALR = (op == 6'd0) & (funct == `JALR);
 
 //******************************************************************************
 // shift instruction decode
@@ -116,9 +118,11 @@ module decode (
 			{`XORI, `DC6}:		alu_opcode = `ALU_XOR; //2/24
             {`LB, `DC6}:        alu_opcode = `ALU_ADD;
             {`LW, `DC6}:        alu_opcode = `ALU_ADD;
+            {`LL, `DC6}:        alu_opcode = `ALU_ADD;
             {`LBU, `DC6}:       alu_opcode = `ALU_ADD;
             {`SB, `DC6}:        alu_opcode = `ALU_ADD;
             {`SW, `DC6}:        alu_opcode = `ALU_ADD;
+            {`SC, `DC6}:        alu_opcode = `ALU_ADD;
             {`BEQ, `DC6}:       alu_opcode = `ALU_SUBU;
             {`BNE, `DC6}:       alu_opcode = `ALU_SUBU;
             {`SPECIAL, `ADD}:   alu_opcode = `ALU_ADD;
@@ -127,6 +131,7 @@ module decode (
             {`SPECIAL, `SUBU}:  alu_opcode = `ALU_SUBU;
             {`SPECIAL, `AND}:   alu_opcode = `ALU_AND;
             {`SPECIAL, `OR}:    alu_opcode = `ALU_OR;
+			{`SPECIAL, `NOR}:	alu_opcode = `ALU_NOR;
 			{`SPECIAL, `XOR}: 	alu_opcode = `ALU_XOR; //2/24
             {`SPECIAL, `MOVN}:  alu_opcode = `ALU_PASSX;
             {`SPECIAL, `MOVZ}:  alu_opcode = `ALU_PASSX;
@@ -210,7 +215,7 @@ module decode (
 
     assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
 
-    assign jr_pc = rs_data;
+    assign jr_pc = (isJR | isJALR) ? rs_data : {14'b0, immediate, 2'b0} ;
     assign mem_write_data = rt_data;
 
 //******************************************************************************
@@ -227,8 +232,8 @@ module decode (
     // for immediate operations, use Imm
     // otherwise use rt
 
-    assign alu_op_y = (use_imm) ? imm : rt_data;
-    assign reg_write_addr = (use_imm) ? rt_addr : rd_addr;
+    assign alu_op_y = (isJAL | isJALR) ? (pc + 8) : ((use_imm) ? imm : rt_data);
+    assign reg_write_addr = (isJAL | isJALR) ? `RA : ((use_imm) ? rt_addr : rd_addr);
 
     // determine when to write back to a register (any operation that isn't an
     // unconditional store, non-linking branch, or non-linking jump)
@@ -244,7 +249,7 @@ module decode (
     assign mem_we = |{op == `SW, op == `SB, op == `SC};    // write to memory
 	//edits up to 2/25 (Vinh)
 	//formerly 1'b0. 
-    assign mem_read = |{op == `LW, op == `LB, op == `LBU}; // use memory data for writing to a register
+    assign mem_read = |{op == `LW, op == `LB, op == `LBU, op == `LL}; // use memory data for writing to a register
 	//end edits
     assign mem_byte = |{op == `SB, op == `LB, op == `LBU};    // memory operations use only one byte
     assign mem_signextend = ~|{op == `LBU};     // sign extend sub-word memory reads
@@ -255,21 +260,28 @@ module decode (
     assign mem_sc_id = (op == `SC);
 
     // 'atomic_id' is high when a load-linked has not been followed by a store.
-    assign atomic_id = 1'b0;
+    assign atomic_id = ((op == `LL) | atomic_ex) //either we're starting an ll or we're still atomic
+                        & (~|{op == `SW, op == `SB, op == `SC}); //if we store we're no longer atomic
 
     // 'mem_sc_mask_id' is high when a store conditional should not store
-    assign mem_sc_mask_id = 1'b0;
+    assign mem_sc_mask_id = ~atomic_ex & (op == `SC);
 
 //******************************************************************************
 // Branch resolution
 //******************************************************************************
 
     wire isEqual = rs_data == rt_data;
+    wire isGTEZ = $signed(rs_data) >= $signed(32'b0);
+    wire isLTEZ = $signed(rs_data) <= $signed(32'b0);
 
     assign jump_branch = |{isBEQ & isEqual,
-                           isBNE & ~isEqual};
+                           isBNE & ~isEqual,
+                           isBGEZNL & isGTEZ,
+                           isBLEZ & isLTEZ,
+                           isBLTZNL & ~isGTEZ,
+                           isBGTZ & ~isLTEZ};
 
-    assign jump_target = isJ;
-    assign jump_reg = isJR;
+    assign jump_target = isJ | isJAL;
+    assign jump_reg = isJR | isJALR;
 
 endmodule

@@ -213,7 +213,7 @@ module decode (
     wire isALUImm = |{op == `ADDI, op == `ADDIU, op == `SLTI, op == `SLTIU, op == `ANDI, op == `ORI};
     wire read_from_rt = ~|{isLUI, jump_target, isALUImm, mem_read};
 
-    assign stall = (rt_mem_dependency | rs_mem_dependency) & read_from_rs;
+    assign stall = (rs_mem_dependency & read_from_rs) | (rt_mem_dependency & read_from_rt);
 
     assign jr_pc = (isJR | isJALR) ? rs_data : {14'b0, immediate, 2'b0} ;
     assign mem_write_data = rt_data;
