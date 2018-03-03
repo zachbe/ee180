@@ -21,10 +21,10 @@ boot:
     ori     $s1, $0, 1          # Prepare the 'done' status
     lui     $t0, 0              # Load some valid address 0x00003210 to register $t0
     ori     $t0, $t0, 0x3210
-	addiu	$t1, $0, $0 		#t1 = 0
+	addiu	$t1, $0, 0	 		#t1 = 0
 	addiu 	$t6, $0, -1			#set index to -1 (becomes 0 after first delayed branch)
 	lui		$t7, 0x0000
-	ori		$t7, 0x000F			#set max index to 16
+	ori		$t7, $t7, 0x000F			#set max index to 16
 	j loop_cond
 	nop
 
