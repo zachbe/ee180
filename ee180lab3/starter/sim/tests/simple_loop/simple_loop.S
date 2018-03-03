@@ -33,7 +33,7 @@ loop:							#for i = 0; i < 16; i++ {t1 = t1 + i}
 	sll		$t1, $t1, 1			#t1 = 2*t1
 	addu	$t1, $t6, $t1
 	addu	$t1, $t1, $t6		#t1 = t1 + 2*i
-	srl		$t1, $t1, 1			$t1 = t1/2
+	srl		$t1, $t1, 1			#t1 = t1/2
 	sw		$t1, 0($t0)
 
 loop_cond: 
