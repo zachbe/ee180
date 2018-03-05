@@ -15,13 +15,13 @@ LOAD /afs/ir.stanford.edu/class/ee180/labs/lab3/mips_cc/mips_tc/bin/../lib/gcc/m
 .text           0x0000000000000000    0x10000
                 0x0000000000000000                . = 0x0
  *(.boot)
- .boot          0x0000000000000000       0x48 build/./movn.S.o
+ .boot          0x0000000000000000       0x3c build/./movn.S.o
                 0x0000000000000000                boot
  *(.*text.startup)
  *(.*text*)
- .text          0x0000000000000048        0x0 build/./movn.S.o
+ .text          0x000000000000003c        0x0 build/./movn.S.o
                 0x0000000000010000                . = 0x10000
- *fill*         0x0000000000000048     0xffb8 
+ *fill*         0x000000000000003c     0xffc4 
 
 .data           0x0000000000010000        0x0
                 0x0000000000000000                . = 0x0

@@ -1,0 +1,8 @@
+Instruction Memory: tests/simple_loop/build/app.hex
+No input data buffer
+No output buffer
+Running userlogic for maximum of 10000 cycles
+VCD info: dumpfile tests/simple_loop/streamwave.vcd opened for output.
+Userlogic ran for 163 cycles
+status register = 1
+test register = 1

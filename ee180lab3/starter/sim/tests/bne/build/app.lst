@@ -10,7 +10,7 @@ Disassembly of section .text:
        8:	34080001 	li	t0,0x1
        c:	34020000 	li	v0,0x0
       10:	15000005 	bnez	t0,28 <boot+0x28>
-      14:	00000000 	nop
+      14:	2508ffff 	addiu	t0,t0,-1
       18:	ae020004 	sw	v0,4(s0)
       1c:	ae110000 	sw	s1,0(s0)
       20:	08000008 	j	20 <boot+0x20>

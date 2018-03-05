@@ -14,11 +14,9 @@ Disassembly of section .text:
       18:	3c0aefee 	lui	t2,0xefee
       1c:	354ae7c8 	ori	t2,t2,0xe7c8
       20:	01095824 	and	t3,t0,t1
-      24:	00000000 	nop
-      28:	01716024 	and	t4,t3,s1
-	...
-      34:	ae0c0004 	sw	t4,4(s0)
-      38:	ae110000 	sw	s1,0(s0)
-      3c:	0800000f 	j	3c <boot+0x3c>
-      40:	00000000 	nop
+      24:	01716024 	and	t4,t3,s1
+      28:	ae0c0004 	sw	t4,4(s0)
+      2c:	ae110000 	sw	s1,0(s0)
+      30:	0800000c 	j	30 <boot+0x30>
+      34:	00000000 	nop
 	...

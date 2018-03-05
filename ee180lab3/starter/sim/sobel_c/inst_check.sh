@@ -6,7 +6,7 @@
 #
 
 #### Disassembly file to read (e.g. 'app.lst')
-FILEPATH="build/app.lst";
+FILEPATH="../sobel_asm/sobel_mips.S";
 
 #### List the supported MIPS instructions below
 SUPPORTED="add addi addiu addu and andi beq beqz bgez bgezal bgtz blez bltz bltzal bne bnez \
