@@ -1,1 +1,5 @@
-TODO: Write your lab report here. See the handout for more information.
+Group 22: Zach Belateche and Vinh Nguyen
+
+Instructions Implemented: Just the required instructions.
+
+Hazards and Forwarding: We needed to implement multiple forwarding paths: wb->id, mem->id, and ex->id. These paths are prioritized so that the most recent rs or rt value is used; for example, the mem forwarding path is used over the wb one if data is present at both. Our ID control had to examine register addresses in the ID phase, along with the status of the pipelined write enable flag, to determine if forwarding was necessary and determine the data source appropriately. If there is a hazard that can not be resolved by these forwarding paths, the processor stalls by a cycle. This allows four or more consecutive data dependencies to be properly forwarded without any hazards occurring, as shown by our triple hazard test.
