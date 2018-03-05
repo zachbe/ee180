@@ -1,0 +1,77 @@
+
+Discarded input sections
+
+ .reginfo       0x0000000000000000       0x18 build/./sobel_mips.S.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD build/./boot.S.o
+LOAD build/./sobel_mips.S.o
+LOAD /afs/ir.stanford.edu/class/ee180/labs/lab3/mips_cc/mips_tc/bin/../lib/gcc/mips-elf/4.9.1/../../../../mips-elf/lib/soft-float/libm.a
+LOAD /afs/ir.stanford.edu/class/ee180/labs/lab3/mips_cc/mips_tc/bin/../lib/gcc/mips-elf/4.9.1/../../../../mips-elf/lib/soft-float/libc.a
+LOAD /afs/ir.stanford.edu/class/ee180/labs/lab3/mips_cc/mips_tc/bin/../lib/gcc/mips-elf/4.9.1/soft-float/libgcc.a
+                0x0000000000004000                _sp = 0x4000
+
+.text           0x0000000000000000    0x10000
+                0x0000000000000000                . = 0x0
+ *(.boot)
+ .boot          0x0000000000000000       0x48 build/./boot.S.o
+                0x0000000000000000                boot
+ *(.*text.startup)
+ .text.startup  0x0000000000000048       0x88 build/./sobel_mips.S.o
+                0x0000000000000048                main
+ *(.*text*)
+ .text          0x00000000000000d0        0x0 build/./boot.S.o
+ .text          0x00000000000000d0      0x174 build/./sobel_mips.S.o
+                0x00000000000000d0                sobel
+                0x00000000000001e4                start_wait
+                0x0000000000000218                done_wait
+                0x0000000000010000                . = 0x10000
+ *fill*         0x0000000000000244     0xfdbc 
+
+.data           0x0000000000010000        0x0
+                0x0000000000000000                . = 0x0
+ *(.rodata*)
+ *(.data*)
+ .data          0x0000000000010000        0x0 build/./boot.S.o
+ .data          0x0000000000010000        0x0 build/./sobel_mips.S.o
+                0x0000000000010000                . = ALIGN (0x400)
+                0x0000000000010000                _gp = .
+
+.sdata
+ *(.*sdata*)
+                0x0000000000010000                _bss_start = .
+
+.sbss
+ *(.*sbss)
+
+.bss            0x0000000000010000        0x0
+ *(.*bss)
+ .bss           0x0000000000010000        0x0 build/./boot.S.o
+ .bss           0x0000000000010000        0x0 build/./sobel_mips.S.o
+                0x0000000000010000                _bss_end = .
+OUTPUT(build/app elf32-bigmips)
+
+.reginfo        0x0000000000000000       0x18
+ .reginfo       0x0000000000000000       0x18 build/./boot.S.o
+
+.pdr            0x0000000000000000       0xa0
+ .pdr           0x0000000000000000       0x20 build/./boot.S.o
+ .pdr           0x0000000000000020       0x80 build/./sobel_mips.S.o
+
+.mdebug.abi32   0x0000000000000000        0x0
+ .mdebug.abi32  0x0000000000000000        0x0 build/./sobel_mips.S.o
+
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 build/./sobel_mips.S.o
+                                         0x12 (size before relaxing)
+
+.gnu.attributes
+                0x0000000000000000       0x10
+ .gnu.attributes
+                0x0000000000000000       0x10 build/./sobel_mips.S.o
