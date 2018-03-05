@@ -1,0 +1,10 @@
+Image rows:  162
+Image columns:  640
+Instruction Memory: tests/sobel_asm/build/app.hex
+Input Data Buffer: tests/sobel_asm/ibuf.hex
+Output buffer: tests/sobel_asm/obuf_test.hex
+  Dumping range: 0x000000000 - 0x000019500
+Running userlogic for maximum of 10000000 cycles
+Userlogic ran for 4775649 cycles
+status register = 1
+test register = 0
