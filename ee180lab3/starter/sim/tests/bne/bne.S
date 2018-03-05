@@ -22,7 +22,7 @@ boot:
     ori     $t0, $0, 1
     ori     $v0, $0, 0          # The test result starts as a failure
     bne     $t0, $0, $target_ne
-    nop
+    addiu 	$t0, $t0, -1		#make $t0 zero to make sure it doesnt mess up branch
 
 $finish:
     sw      $v0, 4($s0)

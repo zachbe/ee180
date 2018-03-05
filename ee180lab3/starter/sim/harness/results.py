@@ -24,7 +24,7 @@ def parse_results(args):
     for line in sorted(results_file):
         columns = line.split(' ')
         if len(columns) >= 2:
-            if (columns[1][0] == '1'):
+            if (columns[1].strip() == '1'):
                 results_passed += 1
                 res_str = colors.GREEN + 'PASS' + colors.DEFAULT
             else:

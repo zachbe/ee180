@@ -1,0 +1,27 @@
+Tests to include:
+Overflow test
+Address misalignment
+Branch Hazards and forwarding
+Delayed Branch resolution
+
+Forwarding Cases
+
+Producers: ex, mem, w
+consumers: ID(set args for ex), ex (set addr for mem),
+Producers to ID stage
+-load/arith, nop, use: mem->id. ONLY WHEN NOT ALSO ARITH, USE. See Double Data Hazard in lecture 9
+-load/arith, nop, nop, use: w -> id Only when not either load/arith,nop, use or arith, use
+-arith, use: ex -> id.
+
+Producers to ex stage: load address still has to go through id/alu to do offset, so no forwarding is possible
+
+Stalling Cases
+load-use (load arith, load addr load, load store)
+Control Hazard
+
+
+
+Within each test:
+Signed and unsigned numbers
+Forwarding cases: Forward to both rs and rt
+

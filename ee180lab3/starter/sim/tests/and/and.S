@@ -25,10 +25,7 @@ boot:
     lui     $t2, 0xefee         # C = 0xefeee7c8
     ori     $t2, $t2, 0xe7c8
     and     $t3, $t0, $t1       # D = and(A,B) = 0x10011827
-    nop
     and     $t4, $t3, $s1       # E = and(C,D) = 0x1
-    nop
-    nop
     sw      $t4, 4($s0)         # Set the test result
     sw      $s1, 0($s0)         # Set 'done'
 

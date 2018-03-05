@@ -34,7 +34,7 @@ module mips_cpu (
     wire atomic_id, atomic_ex;
     wire [3:0] alu_opcode_id, alu_opcode_ex;
     wire [31:0] alu_op_x_id, alu_op_y_id, alu_op_x_ex, alu_op_y_ex;
-    wire [31:0] alu_result_ex, alu_result_mem;
+    wire [31:0] alu_result_ex, alu_result_mem, alu_sc_result_ex;
     wire alu_op_y_zero_ex;
     wire mem_we_id, mem_we_ex;
     wire mem_read_id, mem_read_ex, mem_read_mem;
@@ -56,6 +56,9 @@ module mips_cpu (
         .jump_target    (jump_target_id),
         .pc_id          (pc_id),
         .instr_id       (instr_id[25:0]),
+        .jump_reg       (jump_reg_id),
+        .jr_pc          (jr_pc_id),
+        .jump_branch    (jump_branch_id),
         .pc             (pc_if)
     );
 
@@ -105,18 +108,23 @@ module mips_cpu (
         // inputs for forwarding/stalling from X
         .reg_we_ex          (reg_we_ex),
         .reg_write_addr_ex  (reg_write_addr_ex),
-        .alu_result_ex      (alu_result_ex),
+        .alu_result_ex      (alu_sc_result_ex),
         .mem_read_ex        (mem_read_ex),
 
         // inputs for forwarding/stalling from M
         .reg_we_mem         (reg_we_mem),
         .reg_write_addr_mem (reg_write_addr_mem),
-        .reg_write_data_mem (reg_write_data_mem)
+        .reg_write_data_mem (reg_write_data_mem),
+		
+		//inputs for forwarding from W
+		.reg_we_wb 			(reg_we_wb),
+		.reg_write_addr_wb  (reg_write_addr_wb),
+		.reg_write_data_wb  (reg_write_data_wb)
     );
 
     // Load-linked / Store-conditional
     wire atomic_en = en & mem_read_id;
-    dffarre       atomic  (.clk(clk), .ar(rst), .r(rst_id), .en(atomic_en), .d(mem_atomic_id), .q(mem_atomic_ex));
+    dffarre       atomic  (.clk(clk), .ar(rst), .r(~rst), .en(en_if), .d(mem_atomic_id), .q(mem_atomic_ex));
     dffarre       sc      (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_sc_id), .q(mem_sc_ex));
 
     // needed for X stage
@@ -129,7 +137,10 @@ module mips_cpu (
     // needed for M stage
     dffarre #(32) mem_write_data_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_write_data_id), .q(mem_write_data_ex));
     dffarre mem_we_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_we_id & ~mem_sc_mask_id), .q(mem_we_ex));
-    dffarre mem_read_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(1'b0), .q());
+	//edits up to 2/25 (Vinh)
+	//formerly .d(1'b0) .q()
+    dffarre mem_read_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_read_id), .q(mem_read_ex));
+	//end edits
     dffarre mem_byte_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_byte_id), .q(mem_byte_ex));
     dffarre mem_signextend_id2ex (.clk(clk), .ar(rst), .r(rst_id), .en(en), .d(mem_signextend_id), .q(mem_signextend_ex));
 
@@ -151,18 +162,23 @@ module mips_cpu (
 
     // needed for M stage
     wire [31:0] sc_result = {{31{1'b0}},(mem_sc_ex & mem_we_ex)};
-    wire [31:0] alu_sc_result_ex = alu_result_ex;   // TODO: Need to conditionally inject SC value
+    assign alu_sc_result_ex = (mem_sc_ex) ? sc_result : alu_result_ex;   // TODO: Need to conditionally inject SC value
     dffare #(32) alu_result_ex2mem (.clk(clk), .r(rst), .en(en), .d(alu_sc_result_ex), .q(alu_result_mem));
-    dffare mem_read_ex2mem (.clk(clk), .r(rst), .en(en), .d(1'b0), .q());
+	//edits up to 2/25 (Vinh)
+	//formerly .d(1'b0), .q()
+    dffare mem_read_ex2mem (.clk(clk), .r(rst), .en(en), .d(mem_read_ex), .q(mem_read_mem));
+	//end edits
     dffare mem_byte_ex2mem (.clk(clk), .r(rst), .en(en), .d(mem_byte_ex), .q(mem_byte_mem));
     dffare mem_signextend_ex2mem (.clk(clk), .r(rst), .en(en), .d(mem_signextend_ex), .q(mem_signextend_mem));
 
     // needed for W stage
     dffare #(5) reg_write_addr_ex2mem (.clk(clk), .r(rst), .en(en), .d(reg_write_addr_ex), .q(reg_write_addr_mem));
     dffare reg_we_ex2mem (.clk(clk), .r(rst), .en(en), .d(reg_we_ex), .q(reg_we_mem));
-
-    assign mem_read_ex = 1'b0;
-    assign mem_read_mem = 1'b0;
+	//edits up to 2/25 (Vinh)
+	//The logic for lw is disabled by default; need to change enable signals from 1'b0 to what they should be (see decode)
+    //assign mem_read_ex = 1'b0;
+    //assign mem_read_mem = 1'b0;
+	//end edits
     assign mem_read_en = mem_read_ex;
     assign mem_write_en[3] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b00));
     assign mem_write_en[2] = mem_we_ex & (~mem_byte_ex | (mem_addr[1:0] == 2'b01));
