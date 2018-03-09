@@ -240,9 +240,9 @@ always @ (*) begin
                 // *** Last-row-in-column-strip calculation state ***
                 // Insert your state transition code here.
                 if( col_strip  < max_col_strip) //if we are at the bottom but not the end of image (bot right)
-					 `state_next                      = STATE_WAIT;
+					 state_next                      = STATE_WAIT;
 				else
-					`state_next 					  =	STATE_PROCESSING_DONE;
+					state_next 					  =	STATE_PROCESSING_DONE;
             end
         end
         
@@ -277,6 +277,7 @@ always @ (*) begin
                 // *** Catch-all default ***
                 // In case of anything unpredicted, will cause an error.
                 state_next                      = STATE_ERROR;
+			end
         end
     endcase
 end
