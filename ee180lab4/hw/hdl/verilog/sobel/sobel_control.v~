@@ -470,7 +470,7 @@ always @ (*) begin
         
         STATE_PROCESSING_DONE: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            col_strip_next                      = 'h0 //done: set to 0
+            col_strip_next                      = 'h0; //done: set to 0
         end
         
         STATE_ERROR: begin
@@ -511,37 +511,37 @@ always @ (*) begin
         
         STATE_LOADING_1: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset + stop2sctl_image_n_cols;
+            buf_read_offset_next                = buf_read_offset + stop2sctl_image_n_cols;
         end
         
         STATE_LOADING_2: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset + stop2sctl_image_n_cols;//row 1/3 read, addr for row 2 set
+            buf_read_offset_next                = buf_read_offset + stop2sctl_image_n_cols;//row 1/3 read, addr for row 2 set
         end
         
         STATE_LOADING_3: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset;//row 2/3 read, addr for row 3 set
+            buf_read_offset_next                = buf_read_offset;//row 2/3 read, addr for row 3 set
         end
         
         STATE_PROCESSING_CALC: begin //on first calc: 3/3 rows read
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset + stop2sctl_image_n_cols;//set now so we will increment addr in load state
+            buf_read_offset_next                = buf_read_offset + stop2sctl_image_n_cols;//set now so we will increment addr in load state
         end
         
         STATE_PROCESSING_LOADSS: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset;
+            buf_read_offset_next                = buf_read_offset;
         end
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset + stop2sctl_image_n_cols;
+            buf_read_offset_next                = buf_read_offset + stop2sctl_image_n_cols;
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buff_read_offset;
+            buf_read_offset_next                = buf_read_offset;
         end
         
         STATE_PROCESSING_DONE: begin
@@ -580,37 +580,37 @@ always @ (*) begin
         
         STATE_LOADING_1: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_LOADING_2: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_LOADING_3: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_PROCESSING_CALC: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_PROCESSING_LOADSS: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset + stop2sctl_image_n_cols;
+            buf_write_offset_next               = buf_write_offset + stop2sctl_image_n_cols;
         end
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
         
         STATE_PROCESSING_DONE: begin
@@ -625,7 +625,7 @@ always @ (*) begin
         
         default: begin
             // What happens in the default (unexpected) case? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_read_offset;
+            buf_write_offset_next               = buff_write_offset;
         end
     endcase
 end
