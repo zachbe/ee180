@@ -148,7 +148,7 @@ dffre #(IOBUF_ADDR_WIDTH)               buf_write_offset_r (                    
 // *** Row address increment ***
 // The value of this signal specifies the width of an output row.
 // Insert your code here.
-assign      buf_write_row_incr                  = `NUM_SOBEL_ACCELERATORS;
+assign      buf_write_row_incr                  = stop2scl_image_ncols - 2;
 
 // *** Column strip increment ***
 // The value of this signal specifies the start column of the next column strip.
@@ -575,7 +575,7 @@ always @ (*) begin
     case (state)
         STATE_WAIT: begin
             // What should the starting value be? Insert your code here.
-            buf_write_offset_next               = col_strip + 1;
+            buf_write_offset_next               = col_strip;
         end
         
         STATE_LOADING_1: begin
@@ -600,7 +600,7 @@ always @ (*) begin
         
         STATE_PROCESSING_LOADSS: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buf_write_offset + stop2sctl_image_n_cols;
+            buf_write_offset_next               = buf_write_offset + buf_write_row_incr;
         end
         
         STATE_PROCESSING_CALC_LAST: begin

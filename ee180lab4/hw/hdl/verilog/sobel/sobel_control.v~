@@ -625,7 +625,7 @@ always @ (*) begin
         
         default: begin
             // What happens in the default (unexpected) case? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_offset_next               = buff_write_offset;
+            buf_write_offset_next               = buf_write_offset;
         end
     endcase
 end
