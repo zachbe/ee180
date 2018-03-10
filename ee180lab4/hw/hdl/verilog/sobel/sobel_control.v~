@@ -315,22 +315,22 @@ always @ (*) begin
         
         STATE_PROCESSING_CALC: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            row_op                              = `SOBEL_ROW_OP_HOLD;
+            row_op                              = `SOBEL_ROW_OP_SHIFT_ROW;
         end
         
         STATE_PROCESSING_LOADSS: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            row_op                              = `SOBEL_ROW_OP_SHIFT_ROW;
+            row_op                              = `SOBEL_ROW_OP_SHIFT_HOLD;
         end
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            row_op                              = `SOBEL_ROW_OP_HOLD;
+            row_op                              = `SOBEL_ROW_OP_SHIFT_ROW;
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            row_op                              = `SOBEL_ROW_OP_SHIFT_ROW;
+            row_op                              = `SOBEL_ROW_OP_SHIFT_HOLD;
         end
         
         STATE_PROCESSING_DONE: begin
@@ -666,22 +666,22 @@ always @ (*) begin
         
         STATE_PROCESSING_CALC: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_en                        = 1'b1;
+            buf_write_en                        = 1'b0;
         end
         
         STATE_PROCESSING_LOADSS: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_en                        = 1'b0;
+            buf_write_en                        = 1'b1;
         end
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_en                        = 1'b1;
+            buf_write_en                        = 1'b0;
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_write_en                        = 1'b0;
+            buf_write_en                        = 1'b1;
         end
         
         STATE_PROCESSING_DONE: begin
