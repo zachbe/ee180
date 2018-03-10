@@ -536,7 +536,7 @@ always @ (*) begin
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            buf_read_offset_next                = buf_read_offset;//do not increment over what might be the last valid address
+            buf_read_offset_next                = next_col_strip;//prepare this one cycle ahead so data is received in time for the next column strip calculation
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
