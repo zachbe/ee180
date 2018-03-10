@@ -148,7 +148,7 @@ dffre #(IOBUF_ADDR_WIDTH)               buf_write_offset_r (                    
 // *** Row address increment ***
 // The value of this signal specifies the width of an output row.
 // Insert your code here.
-assign      buf_write_row_incr                  = stop2scl_image_ncols - 2;
+assign      buf_write_row_incr                  = stop2sctl_image_n_cols - 2;
 
 // *** Column strip increment ***
 // The value of this signal specifies the start column of the next column strip.
