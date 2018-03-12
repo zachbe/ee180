@@ -50,6 +50,7 @@ reg [11:0] convx_raw[`NUM_SOBEL_ACCELERATORS-1:0];
 reg [11:0] convy_raw[`NUM_SOBEL_ACCELERATORS-1:0];
 reg [11:0] convx_abs[`NUM_SOBEL_ACCELERATORS-1:0];
 reg [11:0] convy_abs[`NUM_SOBEL_ACCELERATORS-1:0];
+reg [11:0] sobel_raw[`NUM_SOBEL_ACCELERATORS-1:0];
 
 // *** Sobel convolution implementation ***
 // The provided implementation is incomplete. You will need to finish it.
@@ -100,7 +101,8 @@ generate
             
             // *** Calculation of the overall Sobel convolution result ***
             // The horizontal and vertical convolutions must be combined in a way that faithfully implements the Sobel convolution algorithm.
-            sobel_sum[c] = convy[c] + convx[c];
+            sobel_raw[c] = convy[c] + convx[c];
+            sobel_sum[c] = sobel_raw[c] > 11'd255 ? 255 : sobel_raw[c]
             
             // *** Writing out the Sobel convolution result ***
             // This line should place the output of the Sobel convolution (the lines above) into the correct location in the output byte vector.
