@@ -46,8 +46,6 @@ assign      sacc2swt_write_data                 = sobel_out;
 // If you need any extra signals to help with the convolution, declare them here. Otherwise, you may remove these comments.
 // Note that you will need to use "reg" (not "wire") for any signals written to inside the "always" block.
 
-
-
 // *** Sobel convolution implementation ***
 // The provided implementation is incomplete. You will need to finish it.
 // See below comments for more information on how to do so.
@@ -75,7 +73,7 @@ generate
             
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
-            convx[c]   = 'h0; 
+            convx[c]   = convx11[c] + convx12[c] + convx13[c] - convx31[c] - convx32[c] - convx33[c]; 
             
             // *** Calculation of the vertical Sobel convolution ***
             // Each "convy" value corresponds to an input to that calculation, a different pixel in the 9-by-9 grid.
@@ -89,11 +87,11 @@ generate
             
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
-            convy[c]   = 'h0;
+            convy[c]   = convy11[c] - convy13[c] + convy21[c] - convy23[c] + convy31[c] - convy33[c]; 
             
             // *** Calculation of the overall Sobel convolution result ***
             // The horizontal and vertical convolutions must be combined in a way that faithfully implements the Sobel convolution algorithm.
-            sobel_sum[c] = 'h0;
+            sobel_sum[c] = convy[c] + convx[c];
             
             // *** Writing out the Sobel convolution result ***
             // This line should place the output of the Sobel convolution (the lines above) into the correct location in the output byte vector.
