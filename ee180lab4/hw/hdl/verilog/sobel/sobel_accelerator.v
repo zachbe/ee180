@@ -102,7 +102,7 @@ generate
             // *** Calculation of the overall Sobel convolution result ***
             // The horizontal and vertical convolutions must be combined in a way that faithfully implements the Sobel convolution algorithm.
             sobel_raw[c] = convy[c] + convx[c];
-            sobel_sum[c] = sobel_raw[c] > 11'd255 ? 255 : sobel_raw[c]
+            sobel_sum[c] = sobel_raw[c] > 11'd255 ? 255 : sobel_raw[c];
             
             // *** Writing out the Sobel convolution result ***
             // This line should place the output of the Sobel convolution (the lines above) into the correct location in the output byte vector.
