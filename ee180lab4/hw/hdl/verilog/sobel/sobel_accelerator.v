@@ -48,6 +48,8 @@ assign      sacc2swt_write_data                 = sobel_out;
 
 reg [11:0] convx_raw[`NUM_SOBEL_ACCELERATORS-1:0];
 reg [11:0] convy_raw[`NUM_SOBEL_ACCELERATORS-1:0];
+reg [11:0] convx_abs[`NUM_SOBEL_ACCELERATORS-1:0];
+reg [11:0] convy_abs[`NUM_SOBEL_ACCELERATORS-1:0];
 
 // *** Sobel convolution implementation ***
 // The provided implementation is incomplete. You will need to finish it.
@@ -77,7 +79,8 @@ generate
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
             convx_raw[c] = convx11[c] + convx12[c] + convx13[c] - convx31[c] - convx32[c] - convx33[c]; 
-            convx[c]   = convx_raw[c] > 11'd255 ? 255 : convx_raw[c];
+            convx_abs[c] = convx_raw[c][11] ? -convx_raw[c] ? convx_raw[c];
+            convx[c]   = convx_abs[c] > 11'd255 ? 255 : convx_abs[c];
             
             // *** Calculation of the vertical Sobel convolution ***
             // Each "convy" value corresponds to an input to that calculation, a different pixel in the 9-by-9 grid.
@@ -91,8 +94,9 @@ generate
             
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
-            convy_raw[c] = convy11[c] - convy13[c] + convy21[c] - convy23[c] + convy31[c] - convy33[c]; 
-            convy[c]   = convy_raw[c] > 11'd255 ? 255 : convy_raw[c];
+            convy_raw[c] = convy11[c] - convy13[c] + convy21[c] - convy23[c] + convy31[c] - convy33[c];
+            convy_abs[c] = convy_raw[c][11] ? -convy_raw[c] ? convy_raw[c]; 
+            convy[c]   = convy_abs[c] > 11'd255 ? 255 : convy_abs[c];
             
             // *** Calculation of the overall Sobel convolution result ***
             // The horizontal and vertical convolutions must be combined in a way that faithfully implements the Sobel convolution algorithm.
