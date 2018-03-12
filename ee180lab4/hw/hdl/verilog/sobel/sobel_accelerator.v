@@ -79,7 +79,7 @@ generate
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
             convx_raw[c] = convx11[c] + convx12[c] + convx13[c] - convx31[c] - convx32[c] - convx33[c]; 
-            convx_abs[c] = convx_raw[c][11] ? -convx_raw[c] ? convx_raw[c];
+            convx_abs[c] = convx_raw[c][11] ? -convx_raw[c] : convx_raw[c];
             convx[c]   = convx_abs[c] > 11'd255 ? 255 : convx_abs[c];
             
             // *** Calculation of the vertical Sobel convolution ***
@@ -95,7 +95,7 @@ generate
             // Combine the values above in a way that faithfully implements Sobel.
             // You may declare more signals as needed.
             convy_raw[c] = convy11[c] - convy13[c] + convy21[c] - convy23[c] + convy31[c] - convy33[c];
-            convy_abs[c] = convy_raw[c][11] ? -convy_raw[c] ? convy_raw[c]; 
+            convy_abs[c] = convy_raw[c][11] ? -convy_raw[c] : convy_raw[c]; 
             convy[c]   = convy_abs[c] > 11'd255 ? 255 : convy_abs[c];
             
             // *** Calculation of the overall Sobel convolution result ***
