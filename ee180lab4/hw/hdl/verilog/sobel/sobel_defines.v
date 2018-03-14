@@ -10,7 +10,7 @@
  *  Defines macros and constants used throughout the Sobel accelerator.
  */
 
-`define NUM_SOBEL_ACCELERATORS                  2                               // specifies the number of Sobel accelerators to instantiate
+`define NUM_SOBEL_ACCELERATORS                  6                               // specifies the number of Sobel accelerators to instantiate
 
 /** ** DO NOT EDIT BELOW THIS LINE ** **/
 
