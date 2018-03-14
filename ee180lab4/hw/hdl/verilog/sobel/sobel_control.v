@@ -153,13 +153,13 @@ assign      buf_write_row_incr                  = stop2sctl_image_n_cols - 2;
 // *** Column strip increment ***
 // The value of this signal specifies the start column of the next column strip.
 // Insert your code here.
-assign      next_col_strip                      = col_strip + `NUM_SOBEL_ACCELERATORS;
+assign      next_col_strip                      = col_strip + `NUM_SOBEL_ACCELERATORS > max_col_strip? max_col_strip : col_strip + `NUM_SOBEL_ACCELERATORS;
 
 // *** Column strip maximum ***
 // The value of this signal is the termination condition.
 // What is the highest possible value of col_strip that indicates there are still more input pixels to process?
 // Insert your code here.
-assign      max_col_strip                       = stop2sctl_image_n_cols - 2 - `NUM_SOBEL_ACCELERATORS;
+assign      max_col_strip                       = stop2sctl_image_n_cols - 2 <= `NUM_SOBEL_ACCELERATORS ? 'd0 : stop2sctl_image_n_cols - 2 - `NUM_SOBEL_ACCELERATORS;
 
 generate
 for (i = 0; i < `NUM_SOBEL_ACCELERATORS; i = i + 1) begin: sobel_write_en
@@ -460,7 +460,7 @@ always @ (*) begin
         
         STATE_PROCESSING_CALC_LAST: begin
             // What happens in this state? Insert your code here. If nothing changes, you can remove this case completely.
-            col_strip_next                      = col_strip + `NUM_SOBEL_ACCELERATORS; //when we finish an entire strip, increment
+            col_strip_next                      = next_col_strip; //when we finish an entire strip, increment
         end
         
         STATE_PROCESSING_LOADSS_LAST: begin
