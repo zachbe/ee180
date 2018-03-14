@@ -18,3 +18,4 @@ the col_strip index is the default value for the read offset, so that the waitin
 Write Offset
 The write offset is set as col_strip during the WAITING state, and only incremented by the output row width when PROCESSING_LOADSS is reached (in this state, the current offset is written to, and the next offset is incremented). 
 Accelerator
+The accelerator performs the one sobel convolution per output pixel. It first convolves the x kernel with the pixel values, takes its absolute value, and clamps its maximum value to 255. It then does the same for the y kernel, yielding two 8-bit convolution values per pixel, in the x and y directions respectively. These are then added and also clamped to a max value of 255 to give the sobel filter value.
