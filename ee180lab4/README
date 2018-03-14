@@ -1,1 +1,20 @@
-TODO: Write your lab report here. See the handout for more information.
+Group 22
+Vinh Nguyen
+Zach Belateche
+
+Description of changes
+
+Control
+State Machine
+The state machine was filled out to move from the waiting state to the LOADING states (1->2->3), then back and forth between PROCESSING_CALC and PROCESSING_LOAD until the next row is the last row, at which point PROCESSING_LAODSS_LAST and then PROCESSING_CALC_LAST are traversed. On PROCESSING_CALC_LAST, if the col strip is the last one, this indicates we are finished with the image, so we enter PROCESSING_DONE; otherwise, we start over in the waiting state.
+Row Operations
+The row operation is set to shift the data and take the next row of data on the loading states and calculate states, so that on the following cycle the previously read data is shifted down and the new data is at the beginning of the shift register.
+Row Counter
+The row counter is implemented on each of the LOADING and PROCESSING_LOADSS states, and then reset to 0 on the WAITING state.
+col_strip index
+The col_strip is changed to next_col_strip only on the last PROCESSING_CALC state, when the column is completed. next_col_strip is col_strip plus the number of accelerators except if there are fewer rows left than the number of accelerators. In that case, the col_strip becomes the last full column strip of the image.
+Read Offset
+the col_strip index is the default value for the read offset, so that the waiting state reads the first strip of data from the current column strip being processed. The offset is incremented by the row width on the second and third LOADING states, but not the first because the offset for the first row is already there from the waiting state. It is incremented by the row width on the PROCESSING_CALC state if the row is not the last row, so that the address is ready by the time we enter the PROCESSING_LOADSS state.
+Write Offset
+The write offset is set as col_strip during the WAITING state, and only incremented by the output row width when PROCESSING_LOADSS is reached (in this state, the current offset is written to, and the next offset is incremented). 
+Accelerator
