@@ -167,7 +167,7 @@ for (i = 0; i < `NUM_SOBEL_ACCELERATORS; i = i + 1) begin: sobel_write_en
 // *** Write enable ***
 // If pixel_write_en[i] is set to 1, this tells the memory system that the current pixel at index i from the Sobel accelerator contains valid data to be written.
 // Make sure to only set it to 1 when the Sobel accelerator is producing valid data at that pixel position.
-assign      pixel_write_en[i]                   = (state == STATE_PROCESSING_LOADSS)  || (state == STATE_PROCESSING_LOADSS_LAST);
+assign      pixel_write_en[i]                   = ((state == STATE_PROCESSING_LOADSS)  || (state == STATE_PROCESSING_LOADSS_LAST)) && (col_strip + i + 2 < stop2sctl_image_n_cols);
 
 end
 endgenerate
